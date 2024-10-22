@@ -22,28 +22,30 @@ document.addEventListener('DOMContentLoaded', () => {
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     };
 
-    const createTimeSlots = (tableId, startTime, endTime) => {
+    const createTimeSlots = (tableId, sunrise, sunset) => {
         const tableBody = document.getElementById(tableId).querySelector('tbody');
         tableBody.innerHTML = '';  // Clear any existing rows
 
-        let totalDuration = new Date(endTime).getTime() - new Date(startTime).getTime();
+        let startTime = new Date(sunrise).getTime();
+        let endTime = new Date(sunset).getTime();
+        let totalDuration = endTime - startTime;
         let slotDuration = totalDuration / timeSlots.length;
 
         const currentTime = new Date().getTime();
 
-        for (let i = 0; i < timeSlots.length; i++) {
-            const saat = timeSlots[i];
-            const slotStart = new Date(new Date(startTime).getTime() + (slotDuration * i));
-            const slotEnd = new Date(slotStart.getTime() + slotDuration);
-
-            const row = document.createElement('tr');
-            row.innerHTML = `<td>${convertToLocalTime(slotStart)} - ${convertToLocalTime(slotEnd)}</td><td>${saat}</td><td>Planet</td>`;
-            
-            if (currentTime >= slotStart.getTime() && currentTime < slotEnd.getTime()) {
-                row.classList.add('highlight-current'); // Highlight the current saat
-            }
-
-            tableBody.appendChild(row);
+        for (let i = 0; i < 2; i++) {
+            timeSlots.forEach((saat, index) => {
+                const row = document.createElement('tr');
+                const endSlotTime = convertToLocalTime(startTime + slotDuration);
+                row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${saat}</td><td>Planet</td>`;
+                
+                if (currentTime >= startTime && currentTime <= startTime + slotDuration) {
+                    row.classList.add('highlight-current'); // Highlight the current saat
+                }
+                
+                tableBody.appendChild(row);
+                startTime += slotDuration;
+            });
         }
     };
 
@@ -59,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 updateSunTimes(sunrise, sunset);
                 createTimeSlots('day-table', sunrise, sunset);
-                createTimeSlots('night-table', sunset, new Date(new Date(sunset).getTime() + 12 * 60 * 60 * 1000)); // Night slots (12 hours after sunset)
+                createTimeSlots('night-table', sunset, sunrise); // Night slots
             } else {
                 sunTimesDiv.innerText = 'Error fetching sun times.';
             }
