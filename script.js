@@ -30,13 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return new Promise((resolve, reject) => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
-                    console.log("Coordinates fetched: ", position.coords);
+                    alert("Coordinates fetched: " + JSON.stringify(position.coords));
                     resolve({
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     });
                 }, reject);
             } else {
+                alert('Geolocation is not supported by this browser.');
                 reject('Geolocation is not supported by this browser.');
             }
         });
@@ -45,14 +46,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchSunTimes = async (date) => {
         try {
             const coordinates = await getCoordinates();
-            console.log("Fetching sun times for: ", coordinates);
+            alert("Fetching sun times for: " + JSON.stringify(coordinates));
             const apiUrl = `https://api.sunrise-sunset.org/json?lat=${coordinates.lat}&lng=${coordinates.lng}&date=${date}&formatted=0`;
             const response = await fetch(apiUrl);
             const data = await response.json();
-            console.log("API response: ", data);
+            alert("API response: " + JSON.stringify(data));
             updateSunTimes(data.results);
         } catch (error) {
             sunTimesDiv.innerText = 'Error fetching sun times.';
+            alert('Error fetching sunrise and sunset times: ' + error);
             console.error('Error fetching sunrise and sunset times:', error);
         }
     };
