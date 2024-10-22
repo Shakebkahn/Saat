@@ -27,15 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const tableBody = document.getElementById(tableId).querySelector('tbody');
         tableBody.innerHTML = '';  // Clear any existing rows
 
+        const totalSlots = 12; // Total slots we want to create (12 for day and 12 for night)
         let totalDuration = endTime - startTime;
-        let slotDuration = totalDuration / timeSlots.length;
+        let slotDuration = totalDuration / totalSlots;
 
         const currentTime = new Date().getTime();
 
-        for (let i = 0; i < timeSlots.length; i++) {
+        for (let i = 0; i < totalSlots; i++) {
             const row = document.createElement('tr');
             const endSlotTime = convertToLocalTime(startTime + slotDuration);
-            row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${timeSlots[i]}</td><td>${planets[i]}</td>`;
+            row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${timeSlots[i % timeSlots.length]}</td><td>${planets[i % planets.length]}</td>`;
             
             if (currentTime >= startTime && currentTime < startTime + slotDuration) {
                 row.classList.add('highlight-current'); // Highlight the current saat
