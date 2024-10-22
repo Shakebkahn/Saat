@@ -34,7 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     });
-                }, reject);
+                }, error => {
+                    alert(`Error Code ${error.code}: ${error.message}`);
+                    reject('Error fetching coordinates.');
+                });
             } else {
                 alert('Geolocation is not supported by this browser.');
                 reject('Geolocation is not supported by this browser.');
@@ -54,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             sunTimesDiv.innerText = 'Error fetching sun times.';
             alert('Error fetching sunrise and sunset times: ' + error);
-            console.error('Error fetching sunrise and sunset times:', error);
         }
     };
 
