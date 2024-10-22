@@ -14,13 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let userLongitude = 67.0011; // Default: Karachi
 
     const timeSlots = [
-        { name: "Mushtari", planet: "Planet 1" },
-        { name: "Marekh", planet: "Planet 2" },
-        { name: "Shams", planet: "Planet 3" },
-        { name: "Zohra", planet: "Planet 4" },
-        { name: "Attarad", planet: "Planet 5" },
-        { name: "Qamar", planet: "Planet 6" },
-        { name: "Zuhal", planet: "Planet 7" }
+        "Mushtari", "Marekh", "Shams", "Zohra", "Attarad", "Qamar", "Zuhal"
     ];
 
     const convertToLocalTime = (utcTime) => {
@@ -32,35 +26,48 @@ document.addEventListener('DOMContentLoaded', () => {
         const tableBody = document.getElementById(tableId).querySelector('tbody');
         tableBody.innerHTML = '';  // Clear any existing rows
 
-        let startTime, endTime, totalDuration, slotDuration;
-
-        // Day aur Night ke liye alag logic
-        if (tableId === 'day-table') {
-            startTime = new Date(sunrise).getTime();
-            endTime = new Date(sunset).getTime();
-        } else {
-            startTime = new Date(sunset).getTime();  // Night starts after sunset
-            endTime = new Date(sunrise).getTime() + 24 * 60 * 60 * 1000;  // Night ends at next sunrise
-        }
-
-        totalDuration = endTime - startTime;
-        slotDuration = totalDuration / timeSlots.length;
+        let startTime = new Date(sunrise).getTime();
+        let endTime = new Date(sunset).getTime();
+        let totalDuration = endTime - startTime;
+        let slotDuration = totalDuration / timeSlots.length;
 
         const currentTime = new Date().getTime();
 
-        // Loop to create time slots
-        timeSlots.forEach(({ name, planet }) => {
-            const row = document.createElement('tr');
-            const endSlotTime = convertToLocalTime(startTime + slotDuration);
-            row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${name}</td><td>${planet}</td>`;
-            
-            if (currentTime >= startTime && currentTime <= startTime + slotDuration) {
-                row.classList.add('highlight-current'); // Highlight the current saat
+        for (let i = 0; i < 2; i++) {
+            timeSlots.forEach((saat, index) => {
+                const row = document.createElement('tr');
+                const endSlotTime = convertToLocalTime(startTime + slotDuration);
+                row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${saat}</td><td>Planet</td>`;
+                
+                if (currentTime >= startTime && currentTime <= startTime + slotDuration) {
+                    row.classList.add('highlight-current'); // Highlight the current saat
+                }
+                
+                tableBody.appendChild(row);
+                startTime += slotDuration;
+            });
+        }
+    };
+
+    const fetchSunTimes = async (date) => {
+        try {
+            const coordinates = { lat: userLatitude, lng: userLongitude };
+            const apiUrl = `https://api.sunrise-sunset.org/json?lat=${coordinates.lat}&lng=${coordinates.lng}&date=${date}&formatted=0`;
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            if (data.status === 'OK') {
+                const sunrise = new Date(data.results.sunrise).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
+                const sunset = new Date(data.results.sunset).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
+                
+                updateSunTimes(sunrise, sunset);
+                createTimeSlots('day-table', sunrise, sunset);
+                createTimeSlots('night-table', sunset, sunrise); // Night slots
+            } else {
+                sunTimesDiv.innerText = 'Error fetching sun times.';
             }
-            
-            tableBody.appendChild(row);
-            startTime += slotDuration; // Update startTime for the next slot
-        });
+        } catch (error) {
+            sunTimesDiv.innerText = 'Error fetching sun times.';
+        }
     };
 
     const updateSunTimes = (sunrise, sunset) => {
