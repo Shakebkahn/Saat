@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             timeSlots.forEach((saat, index) => {
                 const row = document.createElement('tr');
                 const endSlotTime = convertToLocalTime(startTime + slotDuration);
-                row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${saat}</td><td>${saat.planet}</td>`;
+                row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${saat}</td><td>planet</td>`;
                 
                 if (currentTime >= startTime && currentTime <= startTime + slotDuration) {
                     row.classList.add('highlight-current'); // Highlight the current saat
