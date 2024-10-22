@@ -7,9 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const sunTimesDiv = document.getElementById('sun-times');
     const latitudeElement = document.getElementById('latitude');
     const longitudeElement = document.getElementById('longitude');
+    const customizeSunrise = document.getElementById('customize-sunrise');
+    const customizeSunset = document.getElementById('customize-sunset');
 
-    let userLatitude = 24.9411;  // Default: Karachi
-    let userLongitude = 67.0964; // Default: Karachi
+    let userLatitude = 24.8607;  // Default: Karachi
+    let userLongitude = 67.0011; // Default: Karachi
 
     const timeSlots = [
         "Mushtari", "Marekh", "Shams", "Zohra", "Attarad", "Qamar", "Zuhal"
@@ -20,29 +22,31 @@ document.addEventListener('DOMContentLoaded', () => {
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     };
 
-    const createTimeSlots = (tableId, startTime, endTime) => {
+    const createTimeSlots = (tableId, sunrise, sunset) => {
         const tableBody = document.getElementById(tableId).querySelector('tbody');
         tableBody.innerHTML = '';  // Clear any existing rows
 
-        let startSlotTime = new Date(startTime).getTime();
-        let endSlotTime = new Date(endTime).getTime();
-        let totalDuration = endSlotTime - startSlotTime;
+        let startTime = new Date(sunrise).getTime();
+        let endTime = new Date(sunset).getTime();
+        let totalDuration = endTime - startTime;
         let slotDuration = totalDuration / timeSlots.length;
 
         const currentTime = new Date().getTime();
 
-        timeSlots.forEach((saat, index) => {
-            const row = document.createElement('tr');
-            const endSlotTimeStr = convertToLocalTime(startSlotTime + slotDuration);
-            row.innerHTML = `<td>${convertToLocalTime(startSlotTime)} - ${endSlotTimeStr}</td><td>${saat}</td><td>Planet</td>`;
-            
-            if (currentTime >= startSlotTime && currentTime <= startSlotTime + slotDuration) {
-                row.classList.add('highlight-current'); // Highlight the current saat
-            }
-            
-            tableBody.appendChild(row);
-            startSlotTime += slotDuration;
-        });
+        for (let i = 0; i < 2; i++) {
+            timeSlots.forEach((saat, index) => {
+                const row = document.createElement('tr');
+                const endSlotTime = convertToLocalTime(startTime + slotDuration);
+                row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${saat}</td><td>Planet</td>`;
+                
+                if (currentTime >= startTime && currentTime <= startTime + slotDuration) {
+                    row.classList.add('highlight-current'); // Highlight the current saat
+                }
+                
+                tableBody.appendChild(row);
+                startTime += slotDuration;
+            });
+        }
     };
 
     const fetchSunTimes = async (date) => {
@@ -54,15 +58,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.status === 'OK') {
                 const sunrise = new Date(data.results.sunrise).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
                 const sunset = new Date(data.results.sunset).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
-
+                
                 updateSunTimes(sunrise, sunset);
                 createTimeSlots('day-table', sunrise, sunset);
                 createTimeSlots('night-table', sunset, sunrise); // Night slots
             } else {
-                sunTimesDiv.innerText = 'Sun times fetch nahi ho rahe.';
+                sunTimesDiv.innerText = 'Error fetching sun times.';
             }
         } catch (error) {
-            sunTimesDiv.innerText = 'Sun times fetch karne mein koi error hai.';
+            sunTimesDiv.innerText = 'Error fetching sun times.';
         }
     };
 
@@ -80,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 latitudeElement.innerText = `Latitude: ${userLatitude}`;
                 longitudeElement.innerText = `Longitude: ${userLongitude}`;
             }, (error) => {
-                sunTimesDiv.innerText = 'Location fetch nahi ho rahi, please location access allow karain ya manually input karain.';
+                sunTimesDiv.innerText = 'Error fetching location.';
             });
         } else {
             sunTimesDiv.innerText = 'Geolocation is not supported by this browser.';
