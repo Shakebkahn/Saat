@@ -7,13 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sunTimesDiv = document.getElementById('sun-times');
 
     const timeSlots = [
-        { duration: 30, saat: "Mushtari", planet: "Jupiter" },
-        { duration: 75, saat: "Marekh", planet: "Mars" },
-        { duration: 75, saat: "Shams", planet: "Sun" },
-        { duration: 75, saat: "Zohra", planet: "Venus" },
-        { duration: 75, saat: "Attarad", planet: "Mercury" },
-        { duration: 75, saat: "Qamar", planet: "Moon" },
-        { duration: 75, saat: "Zuhal", planet: "Saturn" }
+        "Mushtari", "Marekh", "Shams", "Zohra", "Attarad", "Qamar", "Zuhal"
     ];
 
     const createTimeSlots = (tableId, sunrise, sunset) => {
@@ -22,13 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let startTime = new Date(`1970-01-01T${sunrise}Z`).getTime();
         let endTime = new Date(`1970-01-01T${sunset}Z`).getTime();
+        let totalDuration = endTime - startTime;
+        let slotDuration = totalDuration / timeSlots.length;
 
-        timeSlots.forEach(slot => {
+        timeSlots.forEach((saat, index) => {
             const row = document.createElement('tr');
-            const endSlotTime = new Date(startTime + slot.duration * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            row.innerHTML = `<td>${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endSlotTime}</td><td>${slot.saat}</td><td>${slot.planet}</td>`;
+            const endSlotTime = new Date(startTime + slotDuration).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            row.innerHTML = `<td>${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endSlotTime}</td><td>${saat}</td><td>Planet</td>`;
             tableBody.appendChild(row);
-            startTime += slot.duration * 60 * 1000;
+            startTime += slotDuration;
         });
     };
 
@@ -41,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if(data.status === 'OK') {
                 updateSunTimes(data.results);
                 createTimeSlots('day-table', data.results.sunrise, data.results.sunset);
-                // You can add a similar function to calculate night slots from sunset to sunrise if needed
             } else {
                 sunTimesDiv.innerText = 'Error fetching sun times.';
             }
@@ -78,6 +73,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize with current date
     dateInput.value = new Date().toISOString().split('T')[0];
     fetchSunTimes(dateInput.value);
-    createTimeSlots('day-table');
-    createTimeSlots('night-table');
 });
