@@ -1,5 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const dateInput = document.getElementById('date-picker');
+    const dayTab = document.getElementById('day-tab');
+    const nightTab = document.getElementById('night-tab');
+    const dayTime = document.getElementById('day-time');
+    const nightTime = document.getElementById('night-time');
     const sunTimesDiv = document.getElementById('sun-times');
 
     const getCoordinates = () => {
@@ -36,9 +40,19 @@ document.addEventListener('DOMContentLoaded', () => {
         sunTimesDiv.innerText = `Sunrise: ${sunrise}, Sunset: ${sunset}`;
     };
 
-    dateInput.addEventListener('change', (e) => {
+    dateInput.addEventListener('change', async (e) => {
         const selectedDate = e.target.value;
         fetchSunTimes(selectedDate);
+    });
+
+    dayTab.addEventListener('click', () => {
+        dayTime.classList.add('active');
+        nightTime.classList.remove('active');
+    });
+
+    nightTab.addEventListener('click', () => {
+        nightTime.classList.add('active');
+        dayTime.classList.remove('active');
     });
 
     // Initialize with current date
