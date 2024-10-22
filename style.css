@@ -49,3 +49,8 @@ th {
 #night-table th {
     background-color: #555;
 }
+
+/* Highlight current saat */
+.current-saat {
+    background-color: #ffeb3b; /* Highlight color for the current saat */
+}
