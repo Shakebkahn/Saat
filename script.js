@@ -27,9 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let currentTime = new Date(startTime);
         let endDate = new Date(endTime);
-        const slotDuration = (endDate - currentTime) / timeSlots.length;
+        const totalDuration = endDate - currentTime;
+        const slotDuration = totalDuration / timeSlots.length;
 
-        const highlightTime = new Date(); // Current time for highlighting
+        // Current time for highlighting
+        const highlightTime = new Date(); 
 
         timeSlots.forEach((saat, index) => {
             const row = document.createElement('tr');
@@ -42,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             tableBody.appendChild(row);
-            currentTime = slotEndTime;
+            currentTime = slotEndTime; // Move to the next time slot
         });
     };
 
