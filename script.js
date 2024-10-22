@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const nightTime = document.getElementById('night-time');
     const sunTimesDiv = document.getElementById('sun-times');
 
+    // Planets corresponding to saatain
     const timeSlots = [
         { name: "Mushtari", planet: "Jupiter" },
         { name: "Marekh", planet: "Mars" },
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: "Zuhal", planet: "Saturn" }
     ];
 
+    // Function to determine the first saatain for the day of the week
     const getFirstSaatForDay = (dayOfWeek) => {
         switch (dayOfWeek) {
             case 0: return "Shams";    // Sunday
@@ -28,29 +30,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Function to get the saatain order based on the day of the week
     const getDayBasedSaatain = (dayOfWeek) => {
         const firstSaat = getFirstSaatForDay(dayOfWeek);
         const firstIndex = timeSlots.findIndex(slot => slot.name === firstSaat);
-        return [...timeSlots.slice(firstIndex), ...timeSlots.slice(0, firstIndex)];
+        // Repeated twice to fill the 12 slots for the day
+        return [...timeSlots.slice(firstIndex), ...timeSlots.slice(0, firstIndex), ...timeSlots];
     };
 
-    const createTimeSlots = (tableId, sunrise, sunset, dayOfWeek) => {
+    // Function to create time slots for the table (12 slots)
+    const createTimeSlots = (tableId, start, end, dayOfWeek) => {
         const tableBody = document.getElementById(tableId).querySelector('tbody');
-        tableBody.innerHTML = '';  // Clear any existing rows
+        tableBody.innerHTML = '';  // Clear existing rows
 
-        let startTime = new Date(sunrise).getTime();  // Use local time format
-        let endTime = new Date(sunset).getTime();
-        let totalDuration = endTime - startTime; // Total time in milliseconds
-        let slotDuration = totalDuration / 7; // Divide by 7 saatain
+        let startTime = new Date(start).getTime();
+        let endTime = new Date(end).getTime();
+        let totalDuration = endTime - startTime;
+        let slotDuration = totalDuration / 12;  // Divide by 12 for 12 time slots
 
-        const saatain = getDayBasedSaatain(dayOfWeek);
+        const saatain = getDayBasedSaatain(dayOfWeek);  // Get the correct order for 12 saatain
 
         saatain.forEach((saat) => {
             const row = document.createElement('tr');
             const endSlotTime = new Date(startTime + slotDuration).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             row.innerHTML = `<td>${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endSlotTime}</td><td>${saat.name}</td><td>${saat.planet}</td>`;
             tableBody.appendChild(row);
-            startTime += slotDuration; // Update start time for next saat
+            startTime += slotDuration;
         });
     };
 
@@ -60,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const apiUrl = `https://api.sunrise-sunset.org/json?lat=${coordinates.lat}&lng=${coordinates.lng}&date=${date}&formatted=0`;
             const response = await fetch(apiUrl);
             const data = await response.json();
-            if(data.status === 'OK') {
+            if (data.status === 'OK') {
                 const today = new Date(date);
                 const dayOfWeek = today.getUTCDay();
                 const sunrise = new Date(data.results.sunrise).toLocaleString("en-US", { timeZone: 'Asia/Karachi' });
