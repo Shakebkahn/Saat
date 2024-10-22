@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const tableBody = document.getElementById(tableId).querySelector('tbody');
         tableBody.innerHTML = '';  // Clear any existing rows
 
-        let startTime = new Date(`1970-01-01T${sunrise}Z`).getTime();
-        let endTime = new Date(`1970-01-01T${sunset}Z`).getTime();
+        let startTime = new Date(sunrise).getTime();
+        let endTime = new Date(sunset).getTime();
         let totalDuration = endTime - startTime;
         let slotDuration = totalDuration / timeSlots.length;
 
@@ -34,8 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const tableBody = document.getElementById(tableId).querySelector('tbody');
         tableBody.innerHTML = '';  // Clear any existing rows
 
-        let startTime = new Date(`1970-01-01T${sunset}Z`).getTime();
-        let endTime = new Date(`1970-01-02T${sunrise}Z`).getTime(); // Next day for sunrise
+        let startTime = new Date(sunset).getTime();
+        let endTime = new Date(new Date(sunset).setDate(new Date(sunset).getDate() + 1) + " " + sunrise.split("T")[1]).getTime(); // Next day for sunrise
         let totalDuration = endTime - startTime;
         let slotDuration = totalDuration / timeSlots.length;
 
@@ -75,8 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const highlightCurrentSaat = (sunrise, sunset) => {
         const now = new Date().getTime();
-        const sunriseTime = new Date(`1970-01-01T${sunrise}Z`).getTime();
-        const sunsetTime = new Date(`1970-01-01T${sunset}Z`).getTime();
+        const sunriseTime = new Date(sunrise).getTime();
+        const sunsetTime = new Date(sunset).getTime();
 
         const dayTableBody = document.getElementById('day-table').querySelector('tbody');
         const nightTableBody = document.getElementById('night-table').querySelector('tbody');
