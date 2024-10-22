@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { time: "9:45 AM - 11:00 AM", saat: "Attarad", planet: "Mercury" },
         { time: "11:00 AM - 12:15 PM", saat: "Qamar", planet: "Moon" },
         { time: "12:15 PM - 1:30 PM", saat: "Zuhal", planet: "Saturn" }
-        // Add more slots as needed
     ];
 
     const createTimeSlots = (tableId) => {
