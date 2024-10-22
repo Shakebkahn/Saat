@@ -89,10 +89,18 @@ input[type="date"] {
 }
 
 #night-time {
-    background-color: #333;
-    color: white;
+    background-color: #2c2c2c; /* Darker background */
+    color: #e0e0e0; /* Slightly lighter text for readability */
 }
 
+#night-table th {
+    background-color: #444; /* Dark background for headers */
+    color: #fff; /* White text for contrast */
+}
+
+.styled-table tr:hover {
+    background-color: #4a4a4a; /* Hover effect for better clarity in night mode */
+}
 #night-table th {
     background-color: #555;
 }
