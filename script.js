@@ -14,7 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let userLongitude = 67.0011; // Default: Karachi
 
     const timeSlots = [
-        "Mushtari", "Marekh", "Shams", "Zohra", "Attarad", "Qamar", "Zuhal"
+        { name: "Mushtari", planet: "Planet 1" },
+        { name: "Marekh", planet: "Planet 2" },
+        { name: "Shams", planet: "Planet 3" },
+        { name: "Zohra", planet: "Planet 4" },
+        { name: "Attarad", planet: "Planet 5" },
+        { name: "Qamar", planet: "Planet 6" },
+        { name: "Zuhal", planet: "Planet 7" }
     ];
 
     const convertToLocalTime = (utcTime) => {
@@ -23,62 +29,40 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const createTimeSlots = (tableId, sunrise, sunset) => {
-    const tableBody = document.getElementById(tableId).querySelector('tbody');
-    tableBody.innerHTML = '';  // Clear any existing rows
+        const tableBody = document.getElementById(tableId).querySelector('tbody');
+        tableBody.innerHTML = '';  // Clear any existing rows
 
-    let startTime = new Date(sunrise).getTime();
-    let endTime = new Date(sunset).getTime();
-    let totalDuration = endTime - startTime;
-    let slotDuration = totalDuration / timeSlots.length;
+        let startTime, endTime, totalDuration, slotDuration;
 
-    const currentTime = new Date().getTime();
-
-    // Outer loop ko remove karein
-    timeSlots.forEach(({ name, planet }) => { // Destructure to get name and planet
-        const row = document.createElement('tr');
-        const endSlotTime = convertToLocalTime(startTime + slotDuration);
-        row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${name}</td><td>${planet}</td>`;
-        
-        if (currentTime >= startTime && currentTime <= startTime + slotDuration) {
-            row.classList.add('highlight-current'); // Highlight the current saat
+        // Day aur Night ke liye alag logic
+        if (tableId === 'day-table') {
+            startTime = new Date(sunrise).getTime();
+            endTime = new Date(sunset).getTime();
+        } else {
+            startTime = new Date(sunset).getTime();  // Night starts after sunset
+            endTime = new Date(sunrise).getTime() + 24 * 60 * 60 * 1000;  // Night ends at next sunrise
         }
-        
-        tableBody.appendChild(row);
-        startTime +=     
-    });
-};
-const createTimeSlots = (tableId, sunrise, sunset) => {
-    const tableBody = document.getElementById(tableId).querySelector('tbody');
-    tableBody.innerHTML = '';  // Clear any existing rows
 
-    let startTime, endTime, totalDuration, slotDuration;
+        totalDuration = endTime - startTime;
+        slotDuration = totalDuration / timeSlots.length;
 
-    if (tableId === 'day-table') {
-        startTime = new Date(sunrise).getTime();
-        endTime = new Date(sunset).getTime();
-    } else {
-        startTime = new Date(sunset).getTime();  // Night starts after sunset
-        endTime = new Date(sunrise).getTime() + 24 * 60 * 60 * 1000;  // Night ends at next sunrise
-    }
+        const currentTime = new Date().getTime();
 
-    totalDuration = endTime - startTime;
-    slotDuration = totalDuration / timeSlots.length;
+        // Loop to create time slots
+        timeSlots.forEach(({ name, planet }) => {
+            const row = document.createElement('tr');
+            const endSlotTime = convertToLocalTime(startTime + slotDuration);
+            row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${name}</td><td>${planet}</td>`;
+            
+            if (currentTime >= startTime && currentTime <= startTime + slotDuration) {
+                row.classList.add('highlight-current'); // Highlight the current saat
+            }
+            
+            tableBody.appendChild(row);
+            startTime += slotDuration; // Update startTime for the next slot
+        });
+    };
 
-    const currentTime = new Date().getTime();
-
-    timeSlots.forEach(({ name, planet }) => {
-        const row = document.createElement('tr');
-        const endSlotTime = convertToLocalTime(startTime + slotDuration);
-        row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${name}</td><td>${planet}</td>`;
-        
-        if (currentTime >= startTime && currentTime <= startTime + slotDuration) {
-            row.classList.add('highlight-current'); // Highlight the current saat
-        }
-        
-        tableBody.appendChild(row);
-        startTime += slotDuration; // Update startTime for the next slot
-    });
-};
     const updateSunTimes = (sunrise, sunset) => {
         const formattedSunrise = new Date(sunrise).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
         const formattedSunset = new Date(sunset).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
