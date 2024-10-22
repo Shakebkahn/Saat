@@ -9,14 +9,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const longitudeElement = document.getElementById('longitude');
     const locationAddressElement = document.getElementById('location-address');
 
-    let userLatitude = 24.8607;  // Default: Karachi
-    let userLongitude = 67.0011; // Default: Karachi
+    let userLatitude = 24.9411;  // Default: Karachi
+    let userLongitude = 67.0964; // Default: Karachi
 
     const timeSlots = [
         "Mushtari", "Marekh", "Shams", "Zohra", "Attarad", "Qamar", "Zuhal"
     ];
 
-    const planets = ["Jupiter", "Mars", "Sun", "Venus", "Mercury", "Moon", "Saturn"]; // Planets for each saat
+    const planets = ["Jupiter", "Mars", "Sun", "Venus", "Mercury", "Moon", "Saturn"];
 
     const convertToLocalTime = (utcTime) => {
         const date = new Date(utcTime);
@@ -27,24 +27,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const tableBody = document.getElementById(tableId).querySelector('tbody');
         tableBody.innerHTML = '';  // Clear any existing rows
 
-        const totalSlots = 12; // Total slots we want to create (12 for day and 12 for night)
-        let totalDuration = endTime - startTime;
-        let slotDuration = totalDuration / totalSlots;
+        const totalDuration = endTime - startTime;
+        const slotDuration = totalDuration / timeSlots.length;
 
         const currentTime = new Date().getTime();
 
-        for (let i = 0; i < totalSlots; i++) {
+        timeSlots.forEach((saat, index) => {
             const row = document.createElement('tr');
             const endSlotTime = convertToLocalTime(startTime + slotDuration);
-            row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${timeSlots[i % timeSlots.length]}</td><td>${planets[i % planets.length]}</td>`;
+            row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${saat}</td><td>${planets[index]}</td>`;
             
-            if (currentTime >= startTime && currentTime < startTime + slotDuration) {
+            if (currentTime >= startTime && currentTime <= startTime + slotDuration) {
                 row.classList.add('highlight-current'); // Highlight the current saat
             }
             
             tableBody.appendChild(row);
             startTime += slotDuration;
-        }
+        });
     };
 
     const fetchSunTimes = async (date) => {
@@ -57,15 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const sunrise = new Date(data.results.sunrise).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
                 const sunset = new Date(data.results.sunset).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
                 
-                // Fetch next day's sunrise for night slots
-                const nextDay = new Date(new Date(date).getTime() + (24 * 60 * 60 * 1000));
-                const nextDayFormatted = nextDay.toISOString().split('T')[0];
-                const nextDayResponse = await fetch(`https://api.sunrise-sunset.org/json?lat=${coordinates.lat}&lng=${coordinates.lng}&date=${nextDayFormatted}&formatted=0`);
-                const nextDayData = await nextDayResponse.json();
-                const nextSunrise = new Date(nextDayData.results.sunrise).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
-
                 updateSunTimes(sunrise, sunset);
                 createTimeSlots('day-table', new Date(sunrise).getTime(), new Date(sunset).getTime());
+                // Fetch next day's sunrise for night slots
+                const nextSunrise = await fetchNextDaySunrise(date);
                 createTimeSlots('night-table', new Date(sunset).getTime(), new Date(nextSunrise).getTime()); // Night slots
             } else {
                 sunTimesDiv.innerText = 'Error fetching sun times.';
@@ -73,6 +67,16 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             sunTimesDiv.innerText = 'Error fetching sun times.';
         }
+    };
+
+    const fetchNextDaySunrise = async (date) => {
+        const nextDay = new Date(new Date(date).getTime() + (24 * 60 * 60 * 1000)); // Adding 24 hours
+        const formattedDate = nextDay.toISOString().split('T')[0];
+        const coordinates = { lat: userLatitude, lng: userLongitude };
+        const apiUrl = `https://api.sunrise-sunset.org/json?lat=${coordinates.lat}&lng=${coordinates.lng}&date=${formattedDate}&formatted=0`;
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        return new Date(data.results.sunrise).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
     };
 
     const updateSunTimes = (sunrise, sunset) => {
@@ -88,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const address = data.display_name; // Extract address
             locationAddressElement.innerText = address; // Show address on the page
         } catch (error) {
-            console.error('Error fetching location address:', error);
+            locationAddressElement.innerText = 'Error fetching location address.';
         }
     };
 
