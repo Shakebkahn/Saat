@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return new Promise((resolve, reject) => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
+                    console.log("Coordinates fetched: ", position.coords);
                     resolve({
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
@@ -24,9 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchSunTimes = async (date) => {
         try {
             const coordinates = await getCoordinates();
+            console.log("Fetching sun times for: ", coordinates);
             const apiUrl = `https://api.sunrise-sunset.org/json?lat=${coordinates.lat}&lng=${coordinates.lng}&date=${date}&formatted=0`;
             const response = await fetch(apiUrl);
             const data = await response.json();
+            console.log("API response: ", data);
             updateSunTimes(data.results);
         } catch (error) {
             sunTimesDiv.innerText = 'Error fetching sun times.';
