@@ -49,14 +49,13 @@ input[type="date"] {
 }
 
 .tab-btn.active {
-    background-color: #4A90E2;
-    color: white;
-    border-radius: 5px;
+    background-color: #4A90E2; /* Blue for active tab */
+    color: #fff; /* White text */
 }
 
 .tab-btn:hover {
-    background-color: #3a7bd5;
-    color: white;
+    background-color: #357ABD; /* Darker blue on hover */
+    color: #fff; /* White text on hover */
 }
 
 .tab-content {
