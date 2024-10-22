@@ -2,6 +2,8 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f9;
     color: #333;
+    margin: 0;
+    padding: 0;
 }
 header, footer {
     text-align: center;
@@ -9,6 +11,7 @@ header, footer {
 }
 .tabs {
     text-align: center;
+    margin-bottom: 20px;
 }
 .tab-content {
     display: none;
@@ -17,11 +20,15 @@ header, footer {
     display: block;
 }
 table {
-    width: 100%;
+    width: 80%;
     border-collapse: collapse;
+    margin: 0 auto;
 }
 th, td {
     padding: 10px;
     border: 1px solid #ccc;
-    text-align: left;
+    text-align: center;
+}
+th {
+    background-color: #f2f2f2;
 }
