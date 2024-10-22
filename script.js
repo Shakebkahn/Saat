@@ -25,30 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const getCoordinates = () => {
-        return new Promise((resolve, reject) => {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    alert("Coordinates fetched: " + JSON.stringify(position.coords));
-                    resolve({
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    });
-                }, error => {
-                    alert(`Error Code ${error.code}: ${error.message}`);
-                    reject('Error fetching coordinates.');
-                });
-            } else {
-                alert('Geolocation is not supported by this browser.');
-                reject('Geolocation is not supported by this browser.');
-            }
-        });
-    };
-
     const fetchSunTimes = async (date) => {
         try {
-            const coordinates = await getCoordinates();
-            alert("Fetching sun times for: " + JSON.stringify(coordinates));
+            const coordinates = { lat: 24.8607, lng: 67.0011 }; // Coordinates for Karachi, Pakistan
             const apiUrl = `https://api.sunrise-sunset.org/json?lat=${coordinates.lat}&lng=${coordinates.lng}&date=${date}&formatted=0`;
             const response = await fetch(apiUrl);
             const data = await response.json();
