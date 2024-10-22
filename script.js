@@ -30,19 +30,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalDuration = endDate - currentTime;
         const slotDuration = totalDuration / timeSlots.length;
 
+        console.log(`Start Time: ${currentTime}`);
+        console.log(`End Time: ${endDate}`);
+        console.log(`Total Duration: ${totalDuration}`);
+        console.log(`Slot Duration: ${slotDuration}`);
+
+        if (slotDuration <= 0) {
+            console.error('Invalid slot duration! Check start and end time.');
+            return;  // Stop execution if times are not valid
+        }
+
         // Current time for highlighting
         const highlightTime = new Date(); 
 
         timeSlots.forEach((saat, index) => {
             const row = document.createElement('tr');
             const slotEndTime = new Date(currentTime.getTime() + slotDuration);
+
             row.innerHTML = `<td>${convertToLocalTime(currentTime)} - ${convertToLocalTime(slotEndTime)}</td><td>${saat.naam}</td><td>${saat.planet}</td>`;
-            
+
             // Highlight the current saat if it matches the time range
             if (highlightTime >= currentTime && highlightTime < slotEndTime) {
                 row.classList.add('highlight-current'); // Highlight the current saat
             }
-            
+
             tableBody.appendChild(row);
             currentTime = slotEndTime; // Move to the next time slot
         });
@@ -62,9 +73,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const sunrise = new Date(data.results.sunrise).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
                 const sunset = new Date(data.results.sunset).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
 
+                console.log(`Sunrise: ${sunrise}`);
+                console.log(`Sunset: ${sunset}`);
+
                 // Create time slots for day and night
                 createTimeSlots('day-table', sunrise, sunset);
-                
+
                 // Night slots: starting from sunset and ending at the next day's sunrise
                 const nextDaySunrise = new Date(new Date(sunrise).getTime() + 24 * 60 * 60 * 1000);
                 createTimeSlots('night-table', sunset, nextDaySunrise);
