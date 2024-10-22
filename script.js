@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const createTimeSlots = (tableId) => {
         const tableBody = document.getElementById(tableId).querySelector('tbody');
+        tableBody.innerHTML = '';  // Clear any existing rows
         timeSlots.forEach(slot => {
             const row = document.createElement('tr');
             row.innerHTML = `<td>${slot.time}</td><td>${slot.saat}</td><td>${slot.planet}</td>`;
@@ -31,8 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const apiUrl = `https://api.sunrise-sunset.org/json?lat=${coordinates.lat}&lng=${coordinates.lng}&date=${date}&formatted=0`;
             const response = await fetch(apiUrl);
             const data = await response.json();
-            alert("API response: " + JSON.stringify(data));
-            updateSunTimes(data.results);
+            if(data.status === 'OK') {
+                updateSunTimes(data.results);
+            } else {
+                sunTimesDiv.innerText = 'Error fetching sun times.';
+                alert('Error: ' + data.status);
+            }
         } catch (error) {
             sunTimesDiv.innerText = 'Error fetching sun times.';
             alert('Error fetching sunrise and sunset times: ' + error);
