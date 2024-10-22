@@ -11,8 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const customizeSunrise = document.getElementById('customize-sunrise');
     const customizeSunset = document.getElementById('customize-sunset');
 
-    let userLatitude = 24.8607;  // Default: Karachi
-    let userLongitude = 67.0011; // Default: Karachi
+    let userLatitude = 24.9411;  // Default: Karachi
+    let userLongitude = 67.0965; // Default: Karachi
 
     const timeSlots = [
         { name: "Mushtari", planet: "Jupiter" }, 
@@ -52,11 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(apiUrl);
             const data = await response.json();
             if (data.status === 'OK') {
-                const sunrise = customizeSunrise.value || data.results.sunrise;
-                const sunset = customizeSunset.value || data.results.sunset;
-                updateSunTimes(sunrise, sunset);
-                createTimeSlots('day-table', new Date(sunrise).getTime(), new Date(sunset).getTime());
-                createTimeSlots('night-table', new Date(sunset).getTime(), new Date(sunset).getTime() + 12 * 60 * 60 * 1000); // Night slots
+                const sunrise = customizeSunrise.value || new Date(data.results.sunrise).getTime();
+                const sunset = customizeSunset.value || new Date(data.results.sunset).getTime();
+                updateSunTimes(new Date(data.results.sunrise), new Date(data.results.sunset));
+                createTimeSlots('day-table', sunrise, sunset);
+                createTimeSlots('night-table', sunset, sunrise + 24 * 60 * 60 * 1000); // Night slots adjusted
             } else {
                 sunTimesDiv.innerText = 'Error fetching sun times.';
             }
@@ -66,8 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const updateSunTimes = (sunrise, sunset) => {
-        const formattedSunrise = new Date(sunrise).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const formattedSunset = new Date(sunset).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const formattedSunrise = sunrise.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const formattedSunset = sunset.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         sunTimesDiv.innerText = `Sunrise: ${formattedSunrise}, Sunset: ${formattedSunset}`;
     };
 
@@ -76,8 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
             navigator.geolocation.getCurrentPosition((position) => {
                 userLatitude = position.coords.latitude;
                 userLongitude = position.coords.longitude;
-                latitudeElement.innerText = `Latitude: ${userLatitude}`;
-                longitudeElement.innerText = `Longitude: ${userLongitude}`;
+                latitudeElement.innerText = `Latitude: ${userLatitude.toFixed(6)}`;
+                longitudeElement.innerText = `Longitude: ${userLongitude.toFixed(6)}`;
             }, (error) => {
                 sunTimesDiv.innerText = 'Error fetching location.';
             });
