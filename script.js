@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const sunTimesDiv = document.getElementById('sun-times');
     const latitudeElement = document.getElementById('latitude');
     const longitudeElement = document.getElementById('longitude');
-    const locationAddressElement = document.getElementById('location-address');
 
     let userLatitude = 24.9411;  // Default: Karachi
     let userLongitude = 67.0964; // Default: Karachi
@@ -15,8 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const timeSlots = [
         "Mushtari", "Marekh", "Shams", "Zohra", "Attarad", "Qamar", "Zuhal"
     ];
-
-    const planets = ["Jupiter", "Mars", "Sun", "Venus", "Mercury", "Moon", "Saturn"];
 
     const convertToLocalTime = (utcTime) => {
         const date = new Date(utcTime);
@@ -27,24 +24,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const tableBody = document.getElementById(tableId).querySelector('tbody');
         tableBody.innerHTML = '';  // Clear any existing rows
 
-        const totalDuration = endTime - startTime;
-        const slotDuration = totalDuration / timeSlots.length;
+        let startSlotTime = new Date(startTime).getTime();
+        let endSlotTime = new Date(endTime).getTime();
+        let totalDuration = endSlotTime - startSlotTime;
+        let slotDuration = totalDuration / timeSlots.length;
 
         const currentTime = new Date().getTime();
 
-        for (let i = 0; i < timeSlots.length; i++) {
+        timeSlots.forEach((saat, index) => {
             const row = document.createElement('tr');
-            const endSlotTime = convertToLocalTime(startTime + slotDuration);
-            const saatIndex = (tableId === 'night-table' && i === 0) ? 5 : i; // For night, start from Qamar
-            row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${timeSlots[saatIndex]}</td><td>${planets[saatIndex]}</td>`;
+            const endSlotTimeStr = convertToLocalTime(startSlotTime + slotDuration);
+            row.innerHTML = `<td>${convertToLocalTime(startSlotTime)} - ${endSlotTimeStr}</td><td>${saat}</td><td>Planet</td>`;
             
-            if (currentTime >= startTime && currentTime <= startTime + slotDuration) {
+            if (currentTime >= startSlotTime && currentTime <= startSlotTime + slotDuration) {
                 row.classList.add('highlight-current'); // Highlight the current saat
             }
             
             tableBody.appendChild(row);
-            startTime += slotDuration;
-        }
+            startSlotTime += slotDuration;
+        });
     };
 
     const fetchSunTimes = async (date) => {
@@ -56,15 +54,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.status === 'OK') {
                 const sunrise = new Date(data.results.sunrise).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
                 const sunset = new Date(data.results.sunset).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
-                
+
                 updateSunTimes(sunrise, sunset);
-                createTimeSlots('day-table', new Date(sunrise).getTime(), new Date(sunset).getTime());
-                createTimeSlots('night-table', new Date(sunset).getTime(), new Date(new Date().setDate(new Date(date).getDate() + 1)).getTime()); // Night slots till next day sunrise
+                createTimeSlots('day-table', sunrise, sunset);
+                createTimeSlots('night-table', sunset, sunrise); // Night slots
             } else {
-                sunTimesDiv.innerText = 'Error fetching sun times.';
+                sunTimesDiv.innerText = 'Sun times fetch nahi ho rahe.';
             }
         } catch (error) {
-            sunTimesDiv.innerText = 'Error fetching sun times.';
+            sunTimesDiv.innerText = 'Sun times fetch karne mein koi error hai.';
         }
     };
 
@@ -74,17 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
         sunTimesDiv.innerText = `Sunrise: ${formattedSunrise}, Sunset: ${formattedSunset}`;
     };
 
-    const fetchLocationAddress = async (latitude, longitude) => {
-        try {
-            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
-            const data = await response.json();
-            const address = data.display_name; // Extract address
-            locationAddressElement.innerText = address; // Show address on the page
-        } catch (error) {
-            locationAddressElement.innerText = 'Error fetching location address.';
-        }
-    };
-
     const getCurrentLocation = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((position) => {
@@ -92,10 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 userLongitude = position.coords.longitude;
                 latitudeElement.innerText = `Latitude: ${userLatitude}`;
                 longitudeElement.innerText = `Longitude: ${userLongitude}`;
-                
-                fetchLocationAddress(userLatitude, userLongitude); // Fetch and display address
             }, (error) => {
-                sunTimesDiv.innerText = 'Error fetching location.';
+                sunTimesDiv.innerText = 'Location fetch nahi ho rahi, please location access allow karain ya manually input karain.';
             });
         } else {
             sunTimesDiv.innerText = 'Geolocation is not supported by this browser.';
