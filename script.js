@@ -1,10 +1,10 @@
-javascript
 document.addEventListener('DOMContentLoaded', () => {
     const dateInput = document.getElementById('date-picker');
     const dayTab = document.getElementById('day-tab');
     const nightTab = document.getElementById('night-tab');
     const dayTime = document.getElementById('day-time');
     const nightTime = document.getElementById('night-time');
+    const sunTimesDiv = document.getElementById('sun-times');
 
     const getCoordinates = () => {
         return new Promise((resolve, reject) => {
@@ -21,24 +21,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const fetchSunTimes = async (date, coordinates) => {
-        const apiUrl = `https://api.sunrise-sunset.org/json?lat=${coordinates.lat}&lng=${coordinates.lng}&date=${date}&formatted=0`;
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        updateSunTimes(data.results);
+    const fetchSunTimes = async (date) => {
+        try {
+            const coordinates = await getCoordinates();
+            const apiUrl = `https://api.sunrise-sunset.org/json?lat=${coordinates.lat}&lng=${coordinates.lng}&date=${date}&formatted=0`;
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            updateSunTimes(data.results);
+        } catch (error) {
+            sunTimesDiv.innerText = 'Error fetching sun times.';
+            console.error('Error fetching sunrise and sunset times:', error);
+        }
     };
 
     const updateSunTimes = (sunTimes) => {
         const sunrise = new Date(sunTimes.sunrise).toLocaleTimeString();
         const sunset = new Date(sunTimes.sunset).toLocaleTimeString();
-        document.getElementById('sun-times').innerText = `Sunrise: ${sunrise}, Sunset: ${sunset}`;
+        sunTimesDiv.innerText = `Sunrise: ${sunrise}, Sunset: ${sunset}`;
         // Update your tables with the new sun times...
     };
 
-    dateInput.addEventListener('change', async (e) => {
+    dateInput.addEventListener('change', (e) => {
         const selectedDate = e.target.value;
-        const coordinates = await getCoordinates();
-        await fetchSunTimes(selectedDate, coordinates);
+        fetchSunTimes(selectedDate);
     });
 
     dayTab.addEventListener('click', () => {
@@ -53,5 +58,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize with current date
     dateInput.value = new Date().toISOString().split('T')[0];
-    dateInput.dispatchEvent(new Event('change'));
+    fetchSunTimes(dateInput.value);
 });
