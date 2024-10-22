@@ -5,18 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saatain Calculator</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <h1>Saatain Calculator</h1>
         <input type="date" id="date-picker">
+        <div id="location-info">Latitude: <span id="latitude"></span>, Longitude: <span id="longitude"></span></div>
     </header>
+
     <div class="tabs">
         <button id="day-tab" class="tab-btn active">Day Time</button>
         <button id="night-tab" class="tab-btn">Night Time</button>
     </div>
+
     <div id="day-time" class="tab-content active">
-        <table id="day-table">
+        <table id="day-table" class="styled-table">
             <thead>
                 <tr>
                     <th>Time</th>
@@ -29,8 +33,9 @@
             </tbody>
         </table>
     </div>
+
     <div id="night-time" class="tab-content">
-        <table id="night-table">
+        <table id="night-table" class="styled-table">
             <thead>
                 <tr>
                     <th>Time</th>
@@ -43,10 +48,20 @@
             </tbody>
         </table>
     </div>
+
     <footer>
         <div id="sun-times"></div>
+        <div id="sun-customization">
+            <h4>Customize Sunrise & Sunset Times:</h4>
+            <label for="custom-sunrise">Sunrise:</label>
+            <input type="time" id="custom-sunrise">
+            <label for="custom-sunset">Sunset:</label>
+            <input type="time" id="custom-sunset">
+            <button id="apply-customization">Apply</button>
+        </div>
         <div id="moon-location">Moon Location: </div>
     </footer>
+
     <script src="script.js"></script>
 </body>
 </html>
