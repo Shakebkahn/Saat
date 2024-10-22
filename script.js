@@ -47,19 +47,25 @@ document.addEventListener('DOMContentLoaded', () => {
         startTime +=     
     });
 };
-
-    const createTimeSlots = (tableId, sunrise, sunset) => {
+const createTimeSlots = (tableId, sunrise, sunset) => {
     const tableBody = document.getElementById(tableId).querySelector('tbody');
     tableBody.innerHTML = '';  // Clear any existing rows
 
-    let startTime = new Date(sunrise).getTime();
-    let endTime = new Date(sunset).getTime();
-    let totalDuration = endTime - startTime;
-    let slotDuration = totalDuration / timeSlots.length;
+    let startTime, endTime, totalDuration, slotDuration;
+
+    if (tableId === 'day-table') {
+        startTime = new Date(sunrise).getTime();
+        endTime = new Date(sunset).getTime();
+    } else {
+        startTime = new Date(sunset).getTime();  // Night starts after sunset
+        endTime = new Date(sunrise).getTime() + 24 * 60 * 60 * 1000;  // Night ends at next sunrise
+    }
+
+    totalDuration = endTime - startTime;
+    slotDuration = totalDuration / timeSlots.length;
 
     const currentTime = new Date().getTime();
 
-    // Remove the outer for loop to prevent repetition
     timeSlots.forEach(({ name, planet }) => {
         const row = document.createElement('tr');
         const endSlotTime = convertToLocalTime(startTime + slotDuration);
@@ -70,10 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         tableBody.appendChild(row);
-        startTime += slotDuration;
+        startTime += slotDuration; // Update startTime for the next slot
     });
 };
-
     const updateSunTimes = (sunrise, sunset) => {
         const formattedSunrise = new Date(sunrise).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
         const formattedSunset = new Date(sunset).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
