@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const latitudeElement = document.getElementById('latitude');
     const longitudeElement = document.getElementById('longitude');
     const locationAddressElement = document.getElementById('location-address');
-    
+
     let userLatitude = 24.8607;  // Default: Karachi
     let userLongitude = 67.0011; // Default: Karachi
 
@@ -32,18 +32,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const currentTime = new Date().getTime();
 
-        timeSlots.forEach((saat, index) => {
+        for (let i = 0; i < timeSlots.length; i++) {
             const row = document.createElement('tr');
             const endSlotTime = convertToLocalTime(startTime + slotDuration);
-            row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${saat}</td><td>${planets[index]}</td>`;
+            row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${timeSlots[i]}</td><td>${planets[i]}</td>`;
             
-            if (currentTime >= startTime && currentTime <= startTime + slotDuration) {
+            if (currentTime >= startTime && currentTime < startTime + slotDuration) {
                 row.classList.add('highlight-current'); // Highlight the current saat
             }
             
             tableBody.appendChild(row);
             startTime += slotDuration;
-        });
+        }
     };
 
     const fetchSunTimes = async (date) => {
@@ -56,30 +56,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 const sunrise = new Date(data.results.sunrise).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
                 const sunset = new Date(data.results.sunset).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
                 
+                // Fetch next day's sunrise for night slots
+                const nextDay = new Date(new Date(date).getTime() + (24 * 60 * 60 * 1000));
+                const nextDayFormatted = nextDay.toISOString().split('T')[0];
+                const nextDayResponse = await fetch(`https://api.sunrise-sunset.org/json?lat=${coordinates.lat}&lng=${coordinates.lng}&date=${nextDayFormatted}&formatted=0`);
+                const nextDayData = await nextDayResponse.json();
+                const nextSunrise = new Date(nextDayData.results.sunrise).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
+
                 updateSunTimes(sunrise, sunset);
                 createTimeSlots('day-table', new Date(sunrise).getTime(), new Date(sunset).getTime());
-                
-                const nextSunrise = await fetchNextDaySunrise(date);
-                createTimeSlots('night-table', new Date(sunset).getTime(), new Date(nextSunrise).getTime());
+                createTimeSlots('night-table', new Date(sunset).getTime(), new Date(nextSunrise).getTime()); // Night slots
             } else {
                 sunTimesDiv.innerText = 'Error fetching sun times.';
             }
         } catch (error) {
             sunTimesDiv.innerText = 'Error fetching sun times.';
         }
-    };
-
-    const fetchNextDaySunrise = async (date) => {
-        const nextDay = new Date(new Date(date).getTime() + (24 * 60 * 60 * 1000)); // Add 1 day
-        const formattedDate = nextDay.toISOString().split('T')[0];
-        const coordinates = { lat: userLatitude, lng: userLongitude };
-        const apiUrl = `https://api.sunrise-sunset.org/json?lat=${coordinates.lat}&lng=${coordinates.lng}&date=${formattedDate}&formatted=0`;
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        if (data.status === 'OK') {
-            return new Date(data.results.sunrise).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
-        }
-        return null;
     };
 
     const updateSunTimes = (sunrise, sunset) => {
@@ -89,10 +81,14 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const fetchLocationAddress = async (latitude, longitude) => {
-        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
-        const data = await response.json();
-        const address = data.display_name; // Extract address
-        locationAddressElement.innerText = `Location: ${address}`; // Show address on the page
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
+            const data = await response.json();
+            const address = data.display_name; // Extract address
+            locationAddressElement.innerText = address; // Show address on the page
+        } catch (error) {
+            console.error('Error fetching location address:', error);
+        }
     };
 
     const getCurrentLocation = () => {
@@ -105,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 fetchLocationAddress(userLatitude, userLongitude); // Fetch and display address
             }, (error) => {
-                sunTimesDiv.innerText = 'Location fetch nahi ho rahi, please location access allow karain ya manually input karain.';
+                sunTimesDiv.innerText = 'Error fetching location.';
             });
         } else {
             sunTimesDiv.innerText = 'Geolocation is not supported by this browser.';
