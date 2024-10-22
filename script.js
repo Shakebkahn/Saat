@@ -62,11 +62,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     dayTab.addEventListener('click', () => {
+        dayTab.classList.add('active');
+        nightTab.classList.remove('active');
         dayTime.classList.add('active');
         nightTime.classList.remove('active');
     });
 
     nightTab.addEventListener('click', () => {
+        nightTab.classList.add('active');
+        dayTab.classList.remove('active');
         nightTime.classList.add('active');
         dayTime.classList.remove('active');
     });
@@ -74,4 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize with current date
     dateInput.value = new Date().toISOString().split('T')[0];
     fetchSunTimes(dateInput.value);
+    createTimeSlots('day-table');
+    createTimeSlots('night-table');
 });
