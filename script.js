@@ -7,42 +7,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const sunTimesDiv = document.getElementById('sun-times');
 
     const timeSlots = [
-        "Mushtari", "Marekh", "Shams", "Zohra", "Attarad", "Qamar", "Zuhal"
+        { name: "Mushtari", planet: "Jupiter" },
+        { name: "Marekh", planet: "Mars" },
+        { name: "Shams", planet: "Sun" },
+        { name: "Zohra", planet: "Venus" },
+        { name: "Attarad", planet: "Mercury" },
+        { name: "Qamar", planet: "Moon" },
+        { name: "Zuhal", planet: "Saturn" }
     ];
-    
-    const planets = ["Jupiter", "Mars", "Sun", "Venus", "Mercury", "Moon", "Saturn"];
 
     const createTimeSlots = (tableId, sunrise, sunset) => {
         const tableBody = document.getElementById(tableId).querySelector('tbody');
         tableBody.innerHTML = '';  // Clear any existing rows
 
-        let startTime = new Date(sunrise).getTime();
-        let endTime = new Date(sunset).getTime();
-        let totalDuration = endTime - startTime;
-        let slotDuration = totalDuration / timeSlots.length;
+        let startTime = new Date(`1970-01-01T${sunrise}Z`).getTime();
+        let endTime = new Date(`1970-01-01T${sunset}Z`).getTime();
+        let totalDuration = endTime - startTime; // Total time in milliseconds
+        let slotDuration = totalDuration / 7; // Divide by 7 since we have 7 saatain
 
+        // First Cycle (Daytime)
         timeSlots.forEach((saat, index) => {
             const row = document.createElement('tr');
             const endSlotTime = new Date(startTime + slotDuration).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            row.innerHTML = `<td>${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endSlotTime}</td><td>${saat}</td><td>${planets[index]}</td>`;
+            row.innerHTML = `<td>${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endSlotTime}</td><td>${saat.name}</td><td>${saat.planet}</td>`;
             tableBody.appendChild(row);
-            startTime += slotDuration;
+            startTime += slotDuration; // Update start time for next saat
         });
-    };
 
-    const createNightTimeSlots = (tableId, sunset, sunrise) => {
-        const tableBody = document.getElementById(tableId).querySelector('tbody');
-        tableBody.innerHTML = '';  // Clear any existing rows
-
-        let startTime = new Date(sunset).getTime();
-        let endTime = new Date(new Date(sunset).setDate(new Date(sunset).getDate() + 1) + " " + sunrise.split("T")[1]).getTime(); // Next day for sunrise
-        let totalDuration = endTime - startTime;
-        let slotDuration = totalDuration / timeSlots.length;
+        // Second Cycle (Nighttime)
+        startTime = new Date(`1970-01-01T${sunset}Z`).getTime(); // Reset to Sunset for night
+        endTime = new Date(`1970-01-02T${sunrise}Z`).getTime(); // Next day sunrise
+        totalDuration = endTime - startTime;
+        slotDuration = totalDuration / 7;
 
         timeSlots.forEach((saat, index) => {
             const row = document.createElement('tr');
             const endSlotTime = new Date(startTime + slotDuration).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            row.innerHTML = `<td>${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endSlotTime}</td><td>${saat}</td><td>${planets[index]}</td>`;
+            row.innerHTML = `<td>${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endSlotTime}</td><td>${saat.name}</td><td>${saat.planet}</td>`;
             tableBody.appendChild(row);
             startTime += slotDuration;
         });
@@ -57,8 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.status === 'OK') {
                 updateSunTimes(data.results);
                 createTimeSlots('day-table', data.results.sunrise, data.results.sunset);
-                createNightTimeSlots('night-table', data.results.sunset, data.results.sunrise);
-                highlightCurrentSaat(data.results.sunrise, data.results.sunset);
             } else {
                 sunTimesDiv.innerText = 'Error fetching sun times.';
             }
@@ -71,35 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const sunrise = new Date(sunTimes.sunrise).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const sunset = new Date(sunTimes.sunset).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         sunTimesDiv.innerText = `Sunrise: ${sunrise}, Sunset: ${sunset}`;
-    };
-
-    const highlightCurrentSaat = (sunrise, sunset) => {
-        const now = new Date().getTime();
-        const sunriseTime = new Date(sunrise).getTime();
-        const sunsetTime = new Date(sunset).getTime();
-
-        const dayTableBody = document.getElementById('day-table').querySelector('tbody');
-        const nightTableBody = document.getElementById('night-table').querySelector('tbody');
-
-        // Highlight current saat in the day table
-        for (let row of dayTableBody.rows) {
-            const cells = row.cells;
-            const start = new Date(`1970-01-01T${cells[0].innerText.split(' - ')[0]}Z`).getTime();
-            const end = new Date(`1970-01-01T${cells[0].innerText.split(' - ')[1]}Z`).getTime();
-            if (now >= start && now < end) {
-                row.classList.add('current-saat');
-            }
-        }
-
-        // Highlight current saat in the night table
-        for (let row of nightTableBody.rows) {
-            const cells = row.cells;
-            const start = new Date(`1970-01-01T${cells[0].innerText.split(' - ')[0]}Z`).getTime();
-            const end = new Date(`1970-01-01T${cells[0].innerText.split(' - ')[1]}Z`).getTime();
-            if (now >= start && now < end) {
-                row.classList.add('current-saat');
-            }
-        }
     };
 
     dateInput.addEventListener('change', async (e) => {
