@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saatain Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Saatain Calculator</h1>
+        <input type="date" id="date-picker">
+    </header>
+    <div class="tabs">
+        <button id="day-tab">Day Time</button>
+        <button id="night-tab">Night Time</button>
+    </div>
+    <div id="day-time" class="tab-content">
+        <table id="day-table">
+            <!-- Day Time table rows -->
+        </table>
+    </div>
+    <div id="night-time" class="tab-content">
+        <table id="night-table">
+            <!-- Night Time table rows -->
+        </table>
+    </div>
+    <footer>
+        <div id="sun-times"></div>
+        <div id="moon-location">Moon Location: </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
