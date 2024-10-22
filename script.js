@@ -48,26 +48,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 };
 
-    const fetchSunTimes = async (date) => {
-        try {
-            const coordinates = { lat: userLatitude, lng: userLongitude };
-            const apiUrl = `https://api.sunrise-sunset.org/json?lat=${coordinates.lat}&lng=${coordinates.lng}&date=${date}&formatted=0`;
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-            if (data.status === 'OK') {
-                const sunrise = new Date(data.results.sunrise).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
-                const sunset = new Date(data.results.sunset).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
-                
-                updateSunTimes(sunrise, sunset);
-                createTimeSlots('day-table', sunrise, sunset);
-                createTimeSlots('night-table', sunset, sunrise); // Night slots
-            } else {
-                sunTimesDiv.innerText = 'Error fetching sun times.';
-            }
-        } catch (error) {
-            sunTimesDiv.innerText = 'Error fetching sun times.';
+    const createTimeSlots = (tableId, sunrise, sunset) => {
+    const tableBody = document.getElementById(tableId).querySelector('tbody');
+    tableBody.innerHTML = '';  // Clear any existing rows
+
+    let startTime = new Date(sunrise).getTime();
+    let endTime = new Date(sunset).getTime();
+    let totalDuration = endTime - startTime;
+    let slotDuration = totalDuration / timeSlots.length;
+
+    const currentTime = new Date().getTime();
+
+    // Remove the outer for loop to prevent repetition
+    timeSlots.forEach(({ name, planet }) => {
+        const row = document.createElement('tr');
+        const endSlotTime = convertToLocalTime(startTime + slotDuration);
+        row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${name}</td><td>${planet}</td>`;
+        
+        if (currentTime >= startTime && currentTime <= startTime + slotDuration) {
+            row.classList.add('highlight-current'); // Highlight the current saat
         }
-    };
+        
+        tableBody.appendChild(row);
+        startTime += slotDuration;
+    });
+};
 
     const updateSunTimes = (sunrise, sunset) => {
         const formattedSunrise = new Date(sunrise).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
