@@ -32,10 +32,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const currentTime = new Date().getTime();
 
-        timeSlots.forEach((saat, index) => {
+        // Start from the last time slot of the previous period (day or night)
+        let startIndex = (tableId === 'day-table') ? 0 : (timeSlots.length - 1);
+        
+        for (let i = 0; i < timeSlots.length; i++) {
+            const saatIndex = (startIndex + i) % timeSlots.length; // Wrap around using modulo
             const row = document.createElement('tr');
             const endSlotTime = convertToLocalTime(startTime + slotDuration);
-            row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${saat}</td><td>${planets[index]}</td>`;
+            row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${timeSlots[saatIndex]}</td><td>${planets[saatIndex]}</td>`;
             
             if (currentTime >= startTime && currentTime <= startTime + slotDuration) {
                 row.classList.add('highlight-current'); // Highlight the current saat
@@ -43,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             tableBody.appendChild(row);
             startTime += slotDuration;
-        });
+        }
     };
 
     const fetchSunTimes = async (date) => {
