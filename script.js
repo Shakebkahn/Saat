@@ -62,7 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Create time slots for day and night
                 createTimeSlots('day-table', sunrise, sunset);
-                createTimeSlots('night-table', sunset, new Date(new Date(sunset).getTime() + 24 * 60 * 60 * 1000)); // Next day night slots
+                
+                // Night slots: starting from sunset and ending at the next day's sunrise
+                const nextDaySunrise = new Date(new Date(sunrise).getTime() + 24 * 60 * 60 * 1000);
+                createTimeSlots('night-table', sunset, nextDaySunrise);
             } else {
                 sunTimesDiv.innerText = 'Error fetching sun times.';
             }
