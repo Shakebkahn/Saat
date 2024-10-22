@@ -23,31 +23,30 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const createTimeSlots = (tableId, sunrise, sunset) => {
-        const tableBody = document.getElementById(tableId).querySelector('tbody');
-        tableBody.innerHTML = '';  // Clear any existing rows
+    const tableBody = document.getElementById(tableId).querySelector('tbody');
+    tableBody.innerHTML = '';  // Clear any existing rows
 
-        let startTime = new Date(sunrise).getTime();
-        let endTime = new Date(sunset).getTime();
-        let totalDuration = endTime - startTime;
-        let slotDuration = totalDuration / timeSlots.length;
+    let startTime = new Date(sunrise).getTime();
+    let endTime = new Date(sunset).getTime();
+    let totalDuration = endTime - startTime;
+    let slotDuration = totalDuration / timeSlots.length;
 
-        const currentTime = new Date().getTime();
+    const currentTime = new Date().getTime();
 
-        for (let i = 0; i < 2; i++) {
-            timeSlots.forEach((saat, index) => {
-                const row = document.createElement('tr');
-                const endSlotTime = convertToLocalTime(startTime + slotDuration);
-                row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${saat}</td><td>planet</td>`;
-                
-                if (currentTime >= startTime && currentTime <= startTime + slotDuration) {
-                    row.classList.add('highlight-current'); // Highlight the current saat
-                }
-                
-                tableBody.appendChild(row);
-                startTime += slotDuration;
-            });
+    // Outer loop ko remove karein
+    timeSlots.forEach(({ name, planet }) => { // Destructure to get name and planet
+        const row = document.createElement('tr');
+        const endSlotTime = convertToLocalTime(startTime + slotDuration);
+        row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${name}</td><td>${planet}</td>`;
+        
+        if (currentTime >= startTime && currentTime <= startTime + slotDuration) {
+            row.classList.add('highlight-current'); // Highlight the current saat
         }
-    };
+        
+        tableBody.appendChild(row);
+        startTime +=     
+    });
+};
 
     const fetchSunTimes = async (date) => {
         try {
