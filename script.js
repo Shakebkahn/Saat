@@ -32,10 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const currentTime = new Date().getTime();
 
-        timeSlots.forEach((saat, index) => {
+        for (let i = 0; i < timeSlots.length; i++) {
             const row = document.createElement('tr');
             const endSlotTime = convertToLocalTime(startTime + slotDuration);
-            row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${saat}</td><td>${planets[index]}</td>`;
+            const saatIndex = (tableId === 'night-table' && i === 0) ? 5 : i; // For night, start from Qamar
+            row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td><td>${timeSlots[saatIndex]}</td><td>${planets[saatIndex]}</td>`;
             
             if (currentTime >= startTime && currentTime <= startTime + slotDuration) {
                 row.classList.add('highlight-current'); // Highlight the current saat
@@ -43,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             tableBody.appendChild(row);
             startTime += slotDuration;
-        });
+        }
     };
 
     const fetchSunTimes = async (date) => {
@@ -58,25 +59,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 updateSunTimes(sunrise, sunset);
                 createTimeSlots('day-table', new Date(sunrise).getTime(), new Date(sunset).getTime());
-                // Fetch next day's sunrise for night slots
-                const nextSunrise = await fetchNextDaySunrise(date);
-                createTimeSlots('night-table', new Date(sunset).getTime(), new Date(nextSunrise).getTime()); // Night slots
+                createTimeSlots('night-table', new Date(sunset).getTime(), new Date(new Date().setDate(new Date(date).getDate() + 1)).getTime()); // Night slots till next day sunrise
             } else {
                 sunTimesDiv.innerText = 'Error fetching sun times.';
             }
         } catch (error) {
             sunTimesDiv.innerText = 'Error fetching sun times.';
         }
-    };
-
-    const fetchNextDaySunrise = async (date) => {
-        const nextDay = new Date(new Date(date).getTime() + (24 * 60 * 60 * 1000)); // Adding 24 hours
-        const formattedDate = nextDay.toISOString().split('T')[0];
-        const coordinates = { lat: userLatitude, lng: userLongitude };
-        const apiUrl = `https://api.sunrise-sunset.org/json?lat=${coordinates.lat}&lng=${coordinates.lng}&date=${formattedDate}&formatted=0`;
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        return new Date(data.results.sunrise).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
     };
 
     const updateSunTimes = (sunrise, sunset) => {
