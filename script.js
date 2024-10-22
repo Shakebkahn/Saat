@@ -6,6 +6,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const nightTime = document.getElementById('night-time');
     const sunTimesDiv = document.getElementById('sun-times');
 
+    const timeSlots = [
+        { time: "5:30 AM - 6:00 AM", saat: "Mushtari", planet: "Jupiter" },
+        { time: "6:00 AM - 7:15 AM", saat: "Marekh", planet: "Mars" },
+        { time: "7:15 AM - 8:30 AM", saat: "Shams", planet: "Sun" },
+        { time: "8:30 AM - 9:45 AM", saat: "Zohra", planet: "Venus" },
+        { time: "9:45 AM - 11:00 AM", saat: "Attarad", planet: "Mercury" },
+        { time: "11:00 AM - 12:15 PM", saat: "Qamar", planet: "Moon" },
+        { time: "12:15 PM - 1:30 PM", saat: "Zuhal", planet: "Saturn" }
+        // Add more slots as needed
+    ];
+
+    const createTimeSlots = (tableId) => {
+        const tableBody = document.getElementById(tableId).querySelector('tbody');
+        timeSlots.forEach(slot => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${slot.time}</td><td>${slot.saat}</td><td>${slot.planet}</td>`;
+            tableBody.appendChild(row);
+        });
+    };
+
     const getCoordinates = () => {
         return new Promise((resolve, reject) => {
             if (navigator.geolocation) {
@@ -61,4 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize with current date
     dateInput.value = new Date().toISOString().split('T')[0];
     fetchSunTimes(dateInput.value);
+    createTimeSlots('day-table');
+    createTimeSlots('night-table');
 });
