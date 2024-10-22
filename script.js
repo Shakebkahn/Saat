@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
             navigator.geolocation.getCurrentPosition((position) => {
                 userLatitude = position.coords.latitude;
                 userLongitude = position.coords.longitude;
-                latitudeElement.innerText = `Latitude: ${userLatitude}`;
-                longitudeElement.innerText = `Longitude: ${userLongitude}`;
+                latitudeElement.innerText = `${userLatitude}`;
+                longitudeElement.innerText = `${userLongitude}`;
             }, (error) => {
                 sunTimesDiv.innerText = 'Error fetching location.';
             });
