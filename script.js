@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const dayTime = document.getElementById('day-time');
     const nightTime = document.getElementById('night-time');
     const sunTimesDiv = document.getElementById('sun-times');
+    const latitudeElement = document.getElementById('latitude');
+    const longitudeElement = document.getElementById('longitude');
 
     let userLatitude = 24.8607;  // Default: Karachi
     let userLongitude = 67.0011; // Default: Karachi
@@ -89,4 +91,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize with current date and fetch sun times
     dateInput.value = new Date().toISOString().split('T')[0];
     fetchSunTimes(dateInput.value);
+
+    // Add event listeners for tab switching
+    dayTab.addEventListener('click', () => {
+        dayTab.classList.add('active');
+        nightTab.classList.remove('active');
+        dayTime.classList.add('active');
+        nightTime.classList.remove('active');
+    });
+
+    nightTab.addEventListener('click', () => {
+        nightTab.classList.add('active');
+        dayTab.classList.remove('active');
+        nightTime.classList.add('active');
+        dayTime.classList.remove('active');
+    });
+
+    // Change event for date picker
+    dateInput.addEventListener('change', (e) => {
+        const selectedDate = e.target.value;
+        fetchSunTimes(selectedDate);
+    });
 });
