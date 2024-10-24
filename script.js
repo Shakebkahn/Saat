@@ -1,9 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     const dateInput = document.getElementById('date-picker');
-    const dayTab = document.getElementById('day-tab');
-    const nightTab = document.getElementById('night-tab');
-    const dayTime = document.getElementById('day-time');
-    const nightTime = document.getElementById('night-time');
     const sunTimesDiv = document.getElementById('sun-times');
     const latitudeElement = document.getElementById('latitude');
     const longitudeElement = document.getElementById('longitude');
@@ -12,13 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let userLongitude = 67.0011; // Default: Karachi
 
     const timeSlots = [
-        { name: "Mushtari", number: 2 },
-        { name: "Marekh", number: 7 },
-        { name: "Shams", number: [1, 4] },
-        { name: "Zohra", number: 6 },
-        { name: "Attarad", number: 5 },
-        { name: "Qamar", number: 3 },
-        { name: "Zuhal", number: 4 }
+        { name: "Mushtari", number: "2" },
+        { name: "Marekh", number: "7" },
+        { name: "Shams", number: "1, 4" },
+        { name: "Zohra", number: "6" },
+        { name: "Attarad", number: "5" },
+        { name: "Qamar", number: "3" },
+        { name: "Zuhal", number: "4" }
     ];
 
     const convertToLocalTime = (utcTime) => {
@@ -26,26 +22,24 @@ document.addEventListener('DOMContentLoaded', () => {
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     };
 
-    const createTimeSlots = (tableId, sunrise, sunset, isNight = false) => {
+    const createTimeSlots = (tableId, startTime, endTime) => {
         const tableBody = document.getElementById(tableId).querySelector('tbody');
         tableBody.innerHTML = '';  // Clear any existing rows
 
-        let startTime = new Date(sunrise).getTime();
-        let endTime = new Date(sunset).getTime();
-        let totalDuration = endTime - startTime;
+        let totalDuration = (new Date(endTime) - new Date(startTime));
         let slotDuration = totalDuration / timeSlots.length;
 
         for (let i = 0; i < timeSlots.length; i++) {
             const row = document.createElement('tr');
-            const endSlotTime = convertToLocalTime(startTime + slotDuration);
-            const slot = timeSlots[i];
-            const slotNumber = Array.isArray(slot.number) ? slot.number.join(', ') : slot.number;
+            const currentStartTime = new Date(new Date(startTime).getTime() + (slotDuration * i));
+            const currentEndTime = new Date(currentStartTime.getTime() + slotDuration);
 
-            row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td>
+            const slot = timeSlots[i];
+            row.innerHTML = `<td>${convertToLocalTime(currentStartTime)} - ${convertToLocalTime(currentEndTime)}</td>
                              <td>${slot.name}</td>
-                             <td>${slotNumber}</td>`;
+                             <td>${slot.name}</td>  <!-- Planet Name -->
+                             <td>${slot.number}</td>`;
             tableBody.appendChild(row);
-            startTime += slotDuration;
         }
     };
 
@@ -61,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 updateSunTimes(sunrise, sunset);
                 createTimeSlots('day-table', sunrise, sunset); // Day slots
-                createTimeSlots('night-table', sunset, new Date(new Date(sunset).getTime() + 24 * 60 * 60 * 1000).toISOString()); // Night slots
+                createTimeSlots('night-table', sunset, new Date(new Date(sunset).setHours(24))); // Night slots till next day
             } else {
                 sunTimesDiv.innerText = 'Error fetching sun times.';
             }
@@ -100,19 +94,4 @@ document.addEventListener('DOMContentLoaded', () => {
     dateInput.value = new Date().toISOString().split('T')[0];
     fetchSunTimes(dateInput.value);
     getCurrentLocation();
-
-    // Tab functionality
-    dayTab.addEventListener('click', () => {
-        dayTime.classList.add('active');
-        nightTime.classList.remove('active');
-        dayTab.classList.add('active');
-        nightTab.classList.remove('active');
-    });
-
-    nightTab.addEventListener('click', () => {
-        nightTime.classList.add('active');
-        dayTime.classList.remove('active');
-        nightTab.classList.add('active');
-        dayTab.classList.remove('active');
-    });
 });
