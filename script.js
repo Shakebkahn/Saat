@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sunTimesDiv = document.getElementById('sun-times');
     const latitudeElement = document.getElementById('latitude');
     const longitudeElement = document.getElementById('longitude');
+    const dateDisplay = document.getElementById('current-date'); // Display current date
 
     let userLatitude = 24.8607;  // Default: Karachi
     let userLongitude = 67.0011; // Default: Karachi
@@ -92,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     dateInput.addEventListener('change', async (e) => {
         const selectedDate = e.target.value;
+        dateDisplay.innerText = `Current Date: ${selectedDate}`; // Display selected date
         fetchSunTimes(selectedDate);
     });
 
@@ -111,6 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize with current date and location
     dateInput.value = new Date().toISOString().split('T')[0];
+    dateDisplay.innerText = `Current Date: ${dateInput.value}`; // Display current date
     fetchSunTimes(dateInput.value);
     getCurrentLocation();
 });
