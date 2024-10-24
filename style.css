@@ -1,99 +1,82 @@
-* {
-    box-sizing: border-box;
-}
-
 body {
-    font-family: 'Roboto', sans-serif; /* Modern font */
-    background-color: #f0f0f5;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
     color: #333;
-    margin: 0;
-    padding: 20px;
 }
 
 .container {
     max-width: 800px;
     margin: auto;
-    background: #fff;
     padding: 20px;
-    border-radius: 15px; /* Rounded corners */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
     text-align: center;
-    color: #007BFF;
+    color: #007bff;
 }
 
-.date-location {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px; /* Reduced space */
+label {
+    margin-bottom: 10px;
+    display: block;
 }
 
 input[type="date"] {
+    width: 100%;
     padding: 10px;
+    margin-bottom: 20px;
     border-radius: 5px;
     border: 1px solid #ccc;
-    width: 48%; /* Keep it compact */
-}
-
-#location {
-    text-align: right;
-    font-size: 14px;
-    color: #555;
 }
 
 .tabs {
     text-align: center;
-    margin-bottom: 15px; /* Reduced space */
+    margin-bottom: 20px;
 }
 
 .tabs button {
-    padding: 10px 20px;
-    margin: 0 5px;
+    padding: 10px 15px;
     border: none;
-    border-radius: 25px; /* Rounded tabs */
-    background-color: #007BFF;
+    border-radius: 5px;
+    background-color: #007bff;
     color: white;
+    margin: 0 5px;
     cursor: pointer;
-    transition: background 0.3s;
-}
-
-.tabs button.active {
-    background-color: #0056b3;
+    transition: background-color 0.3s;
 }
 
 .tabs button:hover {
     background-color: #0056b3;
 }
 
-.time-tables {
-    margin-bottom: 15px; /* Reduced space */
+.tabs .active {
+    background-color: #0056b3;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 15px; /* Reduced space */
+    margin-bottom: 20px;
 }
 
 th, td {
-    padding: 8px; /* Reduced padding */
-    text-align: center;
     border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
 }
 
-th {
-    background-color: #007BFF;
-    color: white;
-}
-
-tr.highlight-current {
-    background-color: #ffeb3b; /* Highlight for current hour */
+thead {
+    background-color: #f2f2f2;
 }
 
 #sun-times {
+    margin: 20px 0;
     text-align: center;
+}
+
+#location-info {
     margin-top: 20px;
+    text-align: center;
 }
