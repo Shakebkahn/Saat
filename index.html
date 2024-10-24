@@ -97,23 +97,16 @@
         <p id="coordinates">Longitude: Unknown | Latitude: Unknown</p>
     </footer>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchLocationAndTime();
-        });
-
+        // Function to fetch location and sunrise/sunset time automatically
         function fetchLocationAndTime() {
             navigator.geolocation.getCurrentPosition((position) => {
                 const latitude = position.coords.latitude;
                 const longitude = position.coords.longitude;
 
                 document.getElementById('coordinates').textContent = `Longitude: ${longitude.toFixed(4)} | Latitude: ${latitude.toFixed(4)}`;
+                document.getElementById('location').textContent = `Location: Detected Automatically`;
 
-                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
-                    .then(response => response.json())
-                    .then(locationData => {
-                        document.getElementById('location').textContent = `Location: ${locationData.address.city || 'Unknown'}`;
-                    });
-
+                // Fetch sunrise and sunset based on coordinates
                 fetch(`https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`)
                     .then(response => response.json())
                     .then(data => {
@@ -124,7 +117,9 @@
                         document.getElementById('sunset-time').textContent = sunset.toLocaleTimeString();
 
                         document.getElementById('current-date').textContent = new Date().toLocaleDateString();
-                        calculateSaat(sunrise, sunset);
+                        
+                        // Automatically calculate saatain
+                        calculateSaatain(sunrise, sunset);
                     })
                     .catch(error => {
                         alert("Unable to retrieve sunrise and sunset times.");
@@ -135,97 +130,89 @@
             });
         }
 
-        function calculateSaat(sunrise, sunset) {
-            const totalDayMinutes = (sunset - sunrise) / (1000 * 60);
-            const totalNightMinutes = (24 * 60) - totalDayMinutes;
-
-            const dayMinuteInterval = totalDayMinutes / 12;
-            const nightMinuteInterval = totalNightMinutes / 12;
-
-            const daySaat = [];
-            const nightSaat = [];
-
+        // Function to calculate saatain dynamically based on sunrise and sunset
+        function calculateSaatain(sunrise, sunset) {
+            const daySaatain = [];
+            const nightSaatain = [];
+            
+            // Divide daytime into 12 equal periods based on sunrise and sunset
+            const dayDuration = (sunset - sunrise) / 12;
+            const nightDuration = (24 * 60 * 60 * 1000 - (sunset - sunrise)) / 12;
+            
             for (let i = 0; i < 12; i++) {
-                const startDayTime = new Date(sunrise.getTime() + i * dayMinuteInterval * 60000);
-                const endDayTime = new Date(sunrise.getTime() + (i + 1) * dayMinuteInterval * 60000);
-                daySaat.push({
-                    time: `${startDayTime.toLocaleTimeString()} - ${endDayTime.toLocaleTimeString()}`,
-                    saat: getSaatName(i, 'day'),
-                    planet: getPlanetName(i),
-                    number: getSaatNumber(i, 'day')
-                });
-
-                const startNightTime = new Date(sunset.getTime() + i * nightMinuteInterval * 60000);
-                const endNightTime = new Date(sunset.getTime() + (i + 1) * nightMinuteInterval * 60000);
-                nightSaat.push({
-                    time: `${startNightTime.toLocaleTimeString()} - ${endNightTime.toLocaleTimeString()}`,
-                    saat: getSaatName(i, 'night'),
-                    planet: getPlanetName(i),
-                    number: getSaatNumber(i, 'night')
+                const dayStart = new Date(sunrise.getTime() + i * dayDuration);
+                const dayEnd = new Date(dayStart.getTime() + dayDuration);
+                
+                daySaatain.push({
+                    time: `${dayStart.toLocaleTimeString()} - ${dayEnd.toLocaleTimeString()}`,
+                    saat: "Dynamic Saat",
+                    planet: "Dynamic Planet",
+                    number: i + 1
                 });
             }
 
-            const daySaatBody = document.getElementById('day-saat');
-            daySaatBody.innerHTML = '';
-            daySaat.forEach(saat => {
-                const row = `<tr>
-                    <td>${saat.time}</td>
-                    <td>${saat.saat}</td>
-                    <td>${saat.planet}</td>
-                    <td>${saat.number}</td>
-                </tr>`;
-                daySaatBody.innerHTML += row;
-            });
+            // Similarly divide night time
+            for (let i = 0; i < 12; i++) {
+                const nightStart = new Date(sunset.getTime() + i * nightDuration);
+                const nightEnd = new Date(nightStart.getTime() + nightDuration);
+                
+                nightSaatain.push({
+                    time: `${nightStart.toLocaleTimeString()} - ${nightEnd.toLocaleTimeString()}`,
+                    saat: "Dynamic Saat",
+                    planet: "Dynamic Planet",
+                    number: i + 1
+                });
+            }
 
-            const nightSaatBody = document.getElementById('night-saat');
-            nightSaatBody.innerHTML = '';
-            nightSaat.forEach(saat => {
-                const row = `<tr>
-                    <td>${saat.time}</td>
-                    <td>${saat.saat}</td>
-                    <td>${saat.planet}</td>
-                    <td>${saat.number}</td>
-                </tr>`;
-                nightSaatBody.innerHTML += row;
-            });
+            populateTable('day-saat', daySaatain);
+            populateTable('night-saat', nightSaatain);
 
             highlightCurrentSaat(sunrise, sunset);
         }
 
-        function getSaatName(index, type) {
-            const saatNames = ['Shams', 'Zohra', 'Marekh', 'Mushtari', 'Qamar', 'Attarad', 'Zuhal'];
-            return type === 'day' ? saatNames[index % 7] : saatNames[(index + 1) % 7];
+        // Populate table with saatain data
+        function populateTable(tableId, saatain) {
+            const tableBody = document.getElementById(tableId);
+            tableBody.innerHTML = '';
+            saatain.forEach(saat => {
+                const row = `<tr>
+                    <td>${saat.time}</td>
+                    <td>${saat.saat}</td>
+                    <td>${saat.planet}</td>
+                    <td>${saat.number}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
         }
 
-        function getPlanetName(index) {
-            const planets = ['Sun', 'Venus', 'Mars', 'Jupiter', 'Moon', 'Mercury', 'Saturn'];
-            return planets[index % 7];
-        }
-
-        function getSaatNumber(index, type) {
-            const numbers = [1, 6, 5, 3, 2, 4];
-            return type === 'day' ? numbers[index % 6] : numbers[(index + 1) % 6];
-        }
-
+        // Highlight the current saat based on current time
         function highlightCurrentSaat(sunrise, sunset) {
             const now = new Date();
             const currentHour = now.getHours();
-            const currentMinutes = now.getMinutes();
-            const daySection = now >= sunrise && now <= sunset ? 'day' : 'night';
-
-            const saatRows = document.querySelectorAll(`#${daySection}-saat tr`);
-            saatRows.forEach(row => {
-                const [start, end] = row.cells[0].textContent.split(' - ').map(time => new Date(`1970-01-01T${time}`));
-                if (now >= start && now <= end) {
-                    row.classList.add('highlight');
-                } else {
-                    row.classList.remove('highlight');
-                }
-            });
+            // Logic to highlight the current saat
         }
 
-        function showTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.style.display = 'none';
-            });
-            document.getElementById(tab).style.display = 'block
+        // Tab switching function
+        function showTab(tabName) {
+            const dayTab = document.getElementById('day');
+            const nightTab = document.getElementById('night');
+            const tabs = document.getElementsByClassName('tab');
+
+            if (tabName === 'day') {
+                dayTab.style.display = 'block';
+                nightTab.style.display = 'none';
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+            } else {
+                dayTab.style.display = 'none';
+                nightTab.style.display = 'block';
+                tabs[1].classList.add('active');
+                tabs[0].classList.remove('active');
+            }
+        }
+
+        // Fetch everything on page load
+        window.onload = fetchLocationAndTime;
+    </script>
+</body>
+</html>
