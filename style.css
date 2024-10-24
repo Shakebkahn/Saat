@@ -1,40 +1,99 @@
-body {
-    font-family: Arial, sans-serif;
+* {
+    box-sizing: border-box;
 }
 
-#container {
-    width: 90%;
-    margin: 0 auto;
+body {
+    font-family: 'Roboto', sans-serif; /* Modern font */
+    background-color: #f0f0f5;
+    color: #333;
+    margin: 0;
     padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #007BFF;
+}
+
+.date-location {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px; /* Reduced space */
+}
+
+input[type="date"] {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 48%; /* Keep it compact */
+}
+
+#location {
+    text-align: right;
+    font-size: 14px;
+    color: #555;
+}
+
+.tabs {
+    text-align: center;
+    margin-bottom: 15px; /* Reduced space */
+}
+
+.tabs button {
+    padding: 10px 20px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 25px; /* Rounded tabs */
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.tabs button.active {
+    background-color: #0056b3;
+}
+
+.tabs button:hover {
+    background-color: #0056b3;
+}
+
+.time-tables {
+    margin-bottom: 15px; /* Reduced space */
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    margin-bottom: 15px; /* Reduced space */
 }
 
 th, td {
-    border: 1px solid #ccc;
-    padding: 10px;
+    padding: 8px; /* Reduced padding */
     text-align: center;
+    border: 1px solid #ddd;
 }
 
 th {
-    background-color: #f4f4f4;
+    background-color: #007BFF;
+    color: white;
 }
 
-.highlight-current {
-    background-color: yellow;
+tr.highlight-current {
+    background-color: #ffeb3b; /* Highlight for current hour */
 }
 
-.tab {
-    cursor: pointer;
-    padding: 10px;
-    border: 1px solid #ccc;
-    display: inline-block;
-    margin-right: 5px;
-}
-
-.active {
-    background-color: #ddd;
+#sun-times {
+    text-align: center;
+    margin-top: 20px;
 }
