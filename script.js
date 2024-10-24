@@ -16,7 +16,6 @@ function fetchLocationAndTime() {
         document.getElementById('coordinates').textContent = `Longitude: ${longitude.toFixed(4)} | Latitude: ${latitude.toFixed(4)}`;
         document.getElementById('location').textContent = `Location: Detected Automatically`;
 
-        // Fetch sunrise and sunset data
         fetch(`https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`)
             .then(response => response.json())
             .then(data => {
@@ -27,7 +26,6 @@ function fetchLocationAndTime() {
                 document.getElementById('sunset-time').textContent = sunset.toLocaleTimeString();
                 document.getElementById('current-date').textContent = new Date().toLocaleDateString();
 
-                // Calculate saatain and update the tables
                 calculateSaatain(sunrise, sunset);
             })
             .catch(error => {
@@ -43,12 +41,10 @@ function calculateSaatain(sunrise, sunset) {
     const nightSaatain = [];
     const now = new Date();
 
-    // Duration for each saat
     const dayDuration = (sunset - sunrise) / 12;
     const nightDuration = (86400000 - (sunset - sunrise)) / 12;
 
     for (let i = 0; i < 12; i++) {
-        // Day Saatain
         const dayStartTime = new Date(sunrise.getTime() + i * dayDuration);
         const dayEndTime = new Date(dayStartTime.getTime() + dayDuration);
         const saat = saatain[i % saatain.length];
@@ -60,7 +56,6 @@ function calculateSaatain(sunrise, sunset) {
             number: saat.number[i % saat.number.length]
         });
 
-        // Night Saatain
         const nightStartTime = new Date(sunset.getTime() + i * nightDuration);
         const nightEndTime = new Date(nightStartTime.getTime() + nightDuration);
         const nightSaat = saatain[i % saatain.length];
@@ -73,19 +68,16 @@ function calculateSaatain(sunrise, sunset) {
         });
     }
 
-    // Display Day Saatain
     const dayTableBody = document.getElementById('day-saat');
     daySaatain.forEach((saatData) => {
         const row = document.createElement('tr');
         const startTime = saatData.start.toLocaleTimeString();
         const endTime = saatData.end.toLocaleTimeString();
-        const timeCell = `<td>${startTime} - ${endTime}</td>`;
-        const saatCell = `<td>${saatData.name}</td>`;
-        const planetCell = `<td>${saatData.planet}</td>`;
-        const numberCell = `<td>${saatData.number}</td>`;
-        row.innerHTML = timeCell + saatCell + planetCell + numberCell;
-
-        // Highlight current saat
+        row.innerHTML = `<td>${startTime} - ${endTime}</td>
+                         <td>${saatData.name}</td>
+                         <td>${saatData.planet}</td>
+                         <td>${saatData.number}</td>`;
+        
         if (now >= saatData.start && now < saatData.end) {
             row.classList.add('highlight');
         }
@@ -93,19 +85,16 @@ function calculateSaatain(sunrise, sunset) {
         dayTableBody.appendChild(row);
     });
 
-    // Display Night Saatain
     const nightTableBody = document.getElementById('night-saat');
     nightSaatain.forEach((saatData) => {
         const row = document.createElement('tr');
         const startTime = saatData.start.toLocaleTimeString();
         const endTime = saatData.end.toLocaleTimeString();
-        const timeCell = `<td>${startTime} - ${endTime}</td>`;
-        const saatCell = `<td>${saatData.name}</td>`;
-        const planetCell = `<td>${saatData.planet}</td>`;
-        const numberCell = `<td>${saatData.number}</td>`;
-        row.innerHTML = timeCell + saatCell + planetCell + numberCell;
+        row.innerHTML = `<td>${startTime} - ${endTime}</td>
+                         <td>${saatData.name}</td>
+                         <td>${saatData.planet}</td>
+                         <td>${saatData.number}</td>`;
 
-        // Highlight current saat
         if (now >= saatData.start && now < saatData.end) {
             row.classList.add('highlight');
         }
@@ -125,5 +114,5 @@ function showTab(tabName) {
     document.querySelector(`.tab[onclick="showTab('${tabName}')"]`).classList.add('active');
 }
 
-// Fetch location and time on load
-window.onload = fetchLocationAndTime;
+// Initial setup
+fetchLocationAndTime();
