@@ -48,15 +48,17 @@ function calculateSaatain(sunrise, sunset) {
     const daySaatain = [];
     const nightSaatain = [];
     const now = new Date();
-
+    
+    // Calculate day and night durations
     const dayDuration = (sunset - sunrise) / 12;
     const nightDuration = (86400000 - (sunset - sunrise)) / 12;
 
+    // Day Saatain calculation
     for (let i = 0; i < 12; i++) {
-        // Day Saatain
         const dayStartTime = new Date(sunrise.getTime() + i * dayDuration);
         const dayEndTime = new Date(dayStartTime.getTime() + dayDuration);
         const saat = saatain[i % saatain.length]; // Fetch saatain from the array
+        
         daySaatain.push({
             start: dayStartTime,
             end: dayEndTime,
@@ -65,10 +67,11 @@ function calculateSaatain(sunrise, sunset) {
             number: saat.number[0] // First number for simplicity
         });
 
-        // Night Saatain
+        // Night Saatain calculation
         const nightStartTime = new Date(sunset.getTime() + i * nightDuration);
         const nightEndTime = new Date(nightStartTime.getTime() + nightDuration);
         const nightSaat = saatain[i % saatain.length]; // Fetch saatain from the array
+        
         nightSaatain.push({
             start: nightStartTime,
             end: nightEndTime,
@@ -105,6 +108,7 @@ function displaySaatain(saatainArray, tableId) {
         tableBody.appendChild(row);
     });
 }
+
 
 
 function showTab(tab) {
