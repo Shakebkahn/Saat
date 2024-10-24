@@ -3,58 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <title>Saatain k waqt</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <title>Saatain K Waqt</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: lightgray;
+            margin: 0 5px;
+            border-radius: 5px;
+        }
+        .tab.active {
+            background-color: blue;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+        footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .highlight {
+            background-color: yellow;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Saatain k waqt</h1>
-            <div id="current-saat-info"></div>
-            <div id="date-info"></div>
-            <div id="sun-times"></div>
-        </header>
-
-        <div class="tabs">
-            <button id="day-tab" class="tab" onclick="showTab('day')">Din</button>
-            <button id="night-tab" class="tab" onclick="showTab('night')">Raat</button>
-        </div>
-
-        <div id="day-time" class="time-table">
-            <table id="day-table">
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Saat</th>
-                        <th>Planet</th>
-                        <th>#</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <div id="night-time" class="time-table" style="display:none;">
-            <table id="night-table">
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Saat</th>
-                        <th>Planet</th>
-                        <th>#</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <footer>
-            <div id="location-info"></div>
-            <div id="coordinates"></div>
-        </footer>
+    <h1>Saatain k waqt</h1>
+    <div>
+        <strong>Current Day Saat:</strong> <span id="current-saat">Unknown</span> | <strong>Date:</strong> <span id="current-date">Unknown</span> <br>
+        <strong>Sunrise:</strong> <span id="sunrise-time">Unknown</span> | <strong>Sunset:</strong> <span id="sunset-time">Unknown</span>
+    </div>
+    
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('day')">Din</div>
+        <div class="tab" onclick="showTab('night')">Raat</div>
     </div>
 
-    <script src="script.js"></script>
+    <div id="day" class="tab-content">
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Saat</th>
+                    <th>Planet</th>
+                    <th>#</th>
+                </tr>
+            </thead>
+            <tbody id="day-saat">
+                <!-- Day saat will be populated here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div id="night" class="tab-content" style="display: none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Saat</th>
+                    <th>Planet</th>
+                    <th>#</th>
+                </tr>
+            </thead>
+            <tbody id="night-saat">
+                <!-- Night saat will be populated here -->
+            </tbody>
+        </table>
+    </div>
+
+    <footer>
+        <p id="location">Location: Unknown</p>
+        <p id="coordinates">Longitude: Unknown | Latitude: Unknown</p>
+    </footer>
+
+    <script>
+        // Function to fetch the current location, time, sunrise, sunset
+        function fetchLocationAndTime() {
+            navigator.geolocation.getCurrentPosition((position) => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                
+                document.getElementById('coordinates').textContent = `Longitude: ${longitude.toFixed(4)} | Latitude: ${latitude.toFixed(4)}`;
+                
+                // Set location based on coordinates (you can enhance this with reverse geocoding)
+                document.getElementById('location').textContent = `Location: Karachi`; // Replace with actual location if available
+
+                const now = new Date();
+                document.getElementById('current-date').textContent = now.toLocaleDateString();
+
+                const sunrise = new Date(now.setHours(6, 0, 0)); // Dummy sunrise time
+                const sunset = new Date(now.setHours(18, 0, 0)); // Dummy sunset time
+                document.getElementById('sunrise-time').textContent = sunrise.toLocaleTimeString();
+                document.getElementById('sunset-time').textContent = sunset.toLocaleTimeString();
+
+                calculateSaat(sunrise, sunset);
+            }, () => {
+                alert("Unable to retrieve your location.");
+            });
+        }
+
+        function calculateSaat(sunrise, sunset) {
+            const daySaat = [
+                { time: '06:00 - 06:30', saat: 'Shams', planet: 'Sun', number: '1' },
+                // Add more day saat here...
+            ];
+
+            const nightSaat = [
+                { time: '18:00 - 18:30', saat: 'Zuhar', planet: 'Mars', number: '7' },
+                // Add more night saat here...
+            ];
+
+            // Populate day saat
+            const daySaatBody = document.getElementById('day-saat');
+            daySaat.forEach(saat => {
+                const row = `<tr>
+                    <td>${saat.time}</td>
+                    <td>${saat.saat}</td>
+                    <td>${saat.planet}</td>
+                    <td>${saat.number}</td>
+                </tr>`;
+                daySaatBody.innerHTML += row;
+            });
+
+            // Populate night saat
+            const nightSaatBody = document.getElementById('night-saat');
+            nightSaat.forEach(saat => {
+                const row = `<tr>
+                    <td>${saat.time}</td>
+                    <td>${saat.saat}</td>
+                    <td>${saat.planet}</td>
+                    <td>${saat.number}</td>
+                </tr>`;
+                nightSaatBody.innerHTML += row;
+            });
+
+            // Highlight current saat (dummy logic, replace with actual logic)
+            const currentSaatRow = daySaatBody.rows[0]; // Assuming the first row is current for demo
+            currentSaatRow.classList.add('highlight');
+
+            document.getElementById('current-saat').textContent = daySaat[0].saat; // Replace with actual current saat logic
+        }
+
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.style.display = 'none';
+            });
+
+            const activeTab = document.getElementById(tabName);
+            activeTab.style.display = 'block';
+
+            const tabElements = document.querySelectorAll('.tab');
+            tabElements.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            const activeElement = Array.from(tabElements).find(tab => tab.innerText.toLowerCase() === tabName);
+            activeElement.classList.add('active');
+        }
+
+        // Fetch location and time on load
+        window.onload = fetchLocationAndTime;
+    </script>
 </body>
 </html>
