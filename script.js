@@ -124,3 +124,10 @@ function showTab(tabName) {
         tab.classList.remove('active');
     });
     document.getElementBy
+    // Display selected tab
+    document.getElementById(tabName).style.display = 'block';
+    document.querySelector(`.tab[onclick="showTab('${tabName}')"]`).classList.add('active');
+}
+
+// Initial fetch of location and time
+fetchLocationAndTime();
