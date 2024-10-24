@@ -3,47 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sun Times Calculator</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Saatain Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Sun Times Calculator</h1>
+        <h1>Saatain Calculator</h1>
+        <label for="date-picker">Date Chune:</label>
         <input type="date" id="date-picker">
-        <p id="current-date"></p>
-        <p id="sun-times"></p>
-        <p>Latitude: <span id="latitude"></span></p>
-        <p>Longitude: <span id="longitude"></span></p>
         
         <div class="tabs">
-            <button id="day-tab" class="tab active">Day</button>
-            <button id="night-tab" class="tab">Night</button>
+            <button id="day-tab" class="active">Din Ki Saatain</button>
+            <button id="night-tab">Raat Ki Saatain</button>
         </div>
+        
+        <table id="day-table">
+            <thead>
+                <tr>
+                    <th>Waqt</th>
+                    <th>Saat Ka Naam</th>
+                    <th>Planet</th>
+                    <th>Number</th>
+                </tr>
+            </thead>
+            <tbody id="day-time"></tbody>
+        </table>
 
-        <div id="day-time" class="tab-content active">
-            <table id="day-table">
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Saat</th>
-                        <th>Number</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
+        <table id="night-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Waqt</th>
+                    <th>Saat Ka Naam</th>
+                    <th>Planet</th>
+                    <th>Number</th>
+                </tr>
+            </thead>
+            <tbody id="night-time"></tbody>
+        </table>
 
-        <div id="night-time" class="tab-content">
-            <table id="night-table">
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Saat</th>
-                        <th>Number</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+        <div id="sun-times"></div>
+        <div id="location-info">
+            <p>Latitude: <span id="latitude"></span></p>
+            <p>Longitude: <span id="longitude"></span></p>
+            <p>Date: <span id="current-date"></span></p>
         </div>
     </div>
     
