@@ -3,70 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <title>Saat Calculator</title>
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f4f4f4;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        .highlight-current {
-            background-color: #FFD700; /* Highlight color for current saat */
-        }
-    </style>
+    <title>Saatain Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Saat Calculator</h1>
-    <input type="date" id="date-picker" />
-    <div id="sun-times"></div>
-    <div>
-        Latitude: <span id="latitude"></span>, Longitude: <span id="longitude"></span>
+    <header>
+        <h1>Saatain k waqt</h1>
+        <div id="current-saat">
+            <span id="current-saat-name">Shams</span> - <span id="current-saat-number">1, 4</span> - <span id="current-planet-name">Sun</span>
+        </div>
+        <div id="date-info">
+            <input type="date" id="date-picker">
+            <div id="sun-times"></div>
+            <div id="location-info"></div>
+        </div>
+    </header>
+    <div class="tabs">
+        <button id="day-tab" class="tab-btn active">Day Time</button>
+        <button id="night-tab" class="tab-btn">Night Time</button>
     </div>
-    
-    <h2>Day Saatain</h2>
-    <table id="day-table">
-        <thead>
-            <tr>
-                <th>Waqt</th>
-                <th>Saat Ka Naam</th>
-                <th>Planet Number</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-
-    <h2>Night Saatain</h2>
-    <table id="night-table">
-        <thead>
-            <tr>
-                <th>Waqt</th>
-                <th>Saat Ka Naam</th>
-                <th>Planet Number</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-
+    <div id="day-time" class="tab-content active">
+        <table id="day-table" class="styled-table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Saat</th>
+                    <th>Planet</th>
+                    <th>#</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Day Time slots will be added here -->
+            </tbody>
+        </table>
+    </div>
+    <div id="night-time" class="tab-content">
+        <table id="night-table" class="styled-table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Saat</th>
+                    <th>Planet</th>
+                    <th>#</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Night Time slots will be added here -->
+            </tbody>
+        </table>
+    </div>
+    <footer>
+        <div id="location-info">
+            <span id="latitude">Latitude: </span>
+            <span id="longitude">Longitude: </span>
+        </div>
+    </footer>
     <script src="script.js"></script>
 </body>
 </html>
