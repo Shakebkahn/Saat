@@ -3,53 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saatain Calculator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <title>Saat Calculator</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .highlight-current {
+            background-color: #FFD700; /* Highlight color for current saat */
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Saatain Calculator</h1>
-        <label for="date-picker">Date Chune:</label>
-        <input type="date" id="date-picker">
-        
-        <div class="tabs">
-            <button id="day-tab" class="active">Din Ki Saatain</button>
-            <button id="night-tab">Raat Ki Saatain</button>
-        </div>
-        
-        <table id="day-table">
-            <thead>
-                <tr>
-                    <th>Waqt</th>
-                    <th>Saat Ka Naam</th>
-                    <th>Planet</th>
-                    <th>Number</th>
-                </tr>
-            </thead>
-            <tbody id="day-time"></tbody>
-        </table>
-
-        <table id="night-table" style="display: none;">
-            <thead>
-                <tr>
-                    <th>Waqt</th>
-                    <th>Saat Ka Naam</th>
-                    <th>Planet</th>
-                    <th>Number</th>
-                </tr>
-            </thead>
-            <tbody id="night-time"></tbody>
-        </table>
-
-        <div id="sun-times"></div>
-        <div id="location-info">
-            <p>Latitude: <span id="latitude"></span></p>
-            <p>Longitude: <span id="longitude"></span></p>
-            <p>Date: <span id="current-date"></span></p>
-        </div>
+    <h1>Saat Calculator</h1>
+    <input type="date" id="date-picker" />
+    <div id="sun-times"></div>
+    <div>
+        Latitude: <span id="latitude"></span>, Longitude: <span id="longitude"></span>
     </div>
     
+    <h2>Day Saatain</h2>
+    <table id="day-table">
+        <thead>
+            <tr>
+                <th>Waqt</th>
+                <th>Saat Ka Naam</th>
+                <th>Planet Number</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Night Saatain</h2>
+    <table id="night-table">
+        <thead>
+            <tr>
+                <th>Waqt</th>
+                <th>Saat Ka Naam</th>
+                <th>Planet Number</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
     <script src="script.js"></script>
 </body>
 </html>
