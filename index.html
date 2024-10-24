@@ -1,50 +1,180 @@
 <!DOCTYPE html>
-<html lang="ur">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saatain Calculator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-        }
-        #current-day-saat {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .tab {
-            display: flex;
-            cursor: pointer;
-            padding: 10px;
-            background-color: lightgray;
-        }
-        .tab.active {
-            background-color: blue;
-            color: white;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
-        }
-    </style>
+    <title>Saatain k Waqt</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
     <h1>Saatain k waqt</h1>
     <div id="current-day-saat"></div>
+    <div id="date-info"></div>
     <div id="sunrise-sunset"></div>
-    <div class="tabs">
-        <div class="tab active" onclick="showTab('day')">Din</div>
-        <div class="tab" onclick="showTab('night')">Raat</div>
+    
+    <div>
+        <button id="day-tab" class="tab active" onclick="changeTab('day')">Din</button>
+        <button id="night-tab" class="tab" onclick="changeTab('night')">Raat</button>
     </div>
-    <div id="day-saat" class="saat-table"></div>
-    <div id="night-saat" class="saat-table" style="display: none;"></div>
-    <div id="location-info"></div>
 
-    <script src="saatain.js"></script>
+    <div id="day-saat" class="saat-table"></div>
+    <div id="night-saat" class="saat-table hidden"></div>
+
+    <div id="location-info"></div>
+    
+    <script>
+        const saatain = [
+            { name: 'Shams', planet: 'Sun', number: [1, 4] },
+            { name: 'Zohra', planet: 'Venus', number: [6] },
+            { name: 'Marekh', planet: 'Mars', number: [7] },
+            { name: 'Mushtari', planet: 'Jupiter', number: [2] },
+            { name: 'Attarad', planet: 'Mercury', number: [5] },
+            { name: 'Zuhal', planet: 'Saturn', number: [8] },
+            { name: 'Qamar', planet: 'Moon', number: [3] }
+        ];
+
+        // Function to fetch location
+        function fetchLocation() {
+            navigator.geolocation.getCurrentPosition(position => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                document.getElementById('location-info').innerText = `Location: Detected Automatically\nLongitude: ${longitude.toFixed(4)} | Latitude: ${latitude.toFixed(4)}`;
+                calculateTimes(latitude, longitude);
+            }, () => {
+                document.getElementById('location-info').innerText = "Location: Not Available";
+            });
+        }
+
+        // Function to calculate sunrise and sunset (Placeholder)
+        function calculateTimes(latitude, longitude) {
+            // Placeholder values for sunrise and sunset (You can replace these with real calculations)
+            const sunrise = new Date(); 
+            sunrise.setHours(6, 33, 23); // 6:33:23 AM
+            const sunset = new Date();
+            sunset.setHours(17, 58, 8); // 5:58:08 PM
+
+            const currentDate = new Date();
+            document.getElementById('date-info').innerText = `Date: ${currentDate.toLocaleDateString()}`;
+            document.getElementById('sunrise-sunset').innerText = `Sunrise: ${sunrise.toLocaleTimeString()} | Sunset: ${sunset.toLocaleTimeString()}`;
+
+            calculateSaatain(sunrise, sunset);
+        }
+
+        // Function to calculate current day saat
+        function calculateCurrentDaySaat(sunrise, sunset) {
+            const now = new Date();
+            const dayStart = sunrise;
+            const dayEnd = sunset;
+            
+            if (now >= dayStart && now < dayEnd) {
+                const dayDuration = (dayEnd - dayStart) / 12;
+                for (let i = 0; i < 12; i++) {
+                    const saatStart = new Date(dayStart.getTime() + i * dayDuration);
+                    const saatEnd = new Date(saatStart.getTime() + dayDuration);
+                    
+                    // Check if current time is within the saat duration
+                    if (now >= saatStart && now < saatEnd) {
+                        return {
+                            name: saatain[i].name,
+                            planet: saatain[i].planet,
+                            number: saatain[i].number[0], // First number for simplicity
+                        };
+                    }
+                }
+            }
+            return null; // No current saat found
+        }
+
+        // Function to display current day saat
+        function displayCurrentDaySaat(currentDaySaat) {
+            if (currentDaySaat) {
+                document.getElementById('current-day-saat').innerHTML = `
+                    Current Day Saat: ${currentDaySaat.name} (Planet: ${currentDaySaat.planet}, Number: ${currentDaySaat.number})
+                `;
+            } else {
+                document.getElementById('current-day-saat').innerHTML = "Current Day Saat: Not Available";
+            }
+        }
+
+        // Function to display saatain in the table
+        function displaySaatain(saatain, elementId) {
+            const saatTable = document.getElementById(elementId);
+            saatTable.innerHTML = `
+                <table>
+                    <tr>
+                        <th>Time</th>
+                        <th>Saat</th>
+                        <th>Planet</th>
+                        <th>#</th>
+                    </tr>
+                </table>
+            `;
+            const table = saatTable.querySelector('table');
+
+            for (const saat of saatain) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${saat.time}</td>
+                    <td>${saat.name || 'Not Available'}</td>
+                    <td>${saat.planet}</td>
+                    <td>${saat.number}</td>
+                `;
+                table.appendChild(row);
+            }
+        }
+
+        // Function to calculate saatain
+        function calculateSaatain(sunrise, sunset) {
+            const daySaatain = [];
+            const nightSaatain = [];
+            const currentDaySaat = calculateCurrentDaySaat(sunrise, sunset);
+            displayCurrentDaySaat(currentDaySaat); // Show current day saat
+
+            // Populate day and night saatain (using dummy data)
+            for (let i = 0; i < 12; i++) {
+                const timeStart = new Date(sunrise.getTime() + (i * (sunset - sunrise) / 12));
+                const timeEnd = new Date(sunrise.getTime() + ((i + 1) * (sunset - sunrise) / 12));
+                daySaatain.push({
+                    time: `${timeStart.toLocaleTimeString()} - ${timeEnd.toLocaleTimeString()}`,
+                    name: saatain[i].name,
+                    planet: saatain[i].planet,
+                    number: saatain[i].number[0],
+                });
+            }
+
+            for (let i = 0; i < 12; i++) {
+                const timeStart = new Date(sunset.getTime() + (i * (24 * 60 * 60 * 1000) / 12));
+                const timeEnd = new Date(sunset.getTime() + ((i + 1) * (24 * 60 * 60 * 1000) / 12));
+                nightSaatain.push({
+                    time: `${timeStart.toLocaleTimeString()} - ${timeEnd.toLocaleTimeString()}`,
+                    name: saatain[i].name,
+                    planet: saatain[i].planet,
+                    number: saatain[i].number[0],
+                });
+            }
+
+            displaySaatain(daySaatain, 'day-saat');
+            displaySaatain(nightSaatain, 'night-saat');
+        }
+
+        // Function to change tab
+        function changeTab(tab) {
+            if (tab === 'day') {
+                document.getElementById('day-saat').classList.remove('hidden');
+                document.getElementById('night-saat').classList.add('hidden');
+                document.getElementById('day-tab').classList.add('active');
+                document.getElementById('night-tab').classList.remove('active');
+            } else {
+                document.getElementById('day-saat').classList.add('hidden');
+                document.getElementById('night-saat').classList.remove('hidden');
+                document.getElementById('night-tab').classList.add('active');
+                document.getElementById('day-tab').classList.remove('active');
+            }
+        }
+
+        // Initialize
+        fetchLocation();
+    </script>
 </body>
 </html>
