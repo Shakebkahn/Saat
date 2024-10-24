@@ -4,56 +4,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saatain Calculator</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #4a90e2;
+        }
+        #sun-times {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        #location {
+            text-align: center;
+            font-size: 1em;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid #4a90e2;
+            background-color: #e0f7fa;
+            margin: 0 5px;
+            transition: background-color 0.3s;
+        }
+        .tab.active {
+            background-color: #4a90e2;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+        th, td {
+            border: 1px solid #4a90e2;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #4a90e2;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #e0f7fa;
+        }
+        tr:hover {
+            background-color: #b2ebf2;
+        }
+        #footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #4a90e2;
+        }
+    </style>
 </head>
 <body>
-
-<div id="container">
     <h1>Saatain Calculator</h1>
-    
-    <label for="date-picker">Select Date: </label>
-    <input type="date" id="date-picker" />
-    
-    <div id="tabs">
-        <div id="day-tab" class="tab active">Day</div>
-        <div id="night-tab" class="tab">Night</div>
-    </div>
-    
-    <div id="day-time" class="time-table active">
-        <h2>Day Timings</h2>
-        <table id="day-table">
-            <thead>
-                <tr>
-                    <th>Waqt</th>
-                    <th>Saat Ka Naam</th>
-                    <th>Number</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-    
-    <div id="night-time" class="time-table">
-        <h2>Night Timings</h2>
-        <table id="night-table">
-            <thead>
-                <tr>
-                    <th>Waqt</th>
-                    <th>Saat Ka Naam</th>
-                    <th>Number</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-
     <div id="sun-times"></div>
-    <div>Latitude: <span id="latitude"></span></div>
-    <div>Longitude: <span id="longitude"></span></div>
-    <div>Date: <span id="current-date"></span></div>
-</div>
+    <div id="location"></div>
+    
+    <div class="tabs">
+        <div class="tab active" id="day-tab">Din Ki Saatain</div>
+        <div class="tab" id="night-tab">Raat Ki Saatain</div>
+    </div>
 
-<script src="script.js"></script>
+    <table id="day-table">
+        <thead>
+            <tr>
+                <th>Waqt</th>
+                <th>Saat Ka Naam</th>
+                <th>Planet Ka Naam</th>
+                <th>Number</th>
+            </tr>
+        </thead>
+        <tbody id="day-time">
+            <!-- Day timings will be populated here -->
+        </tbody>
+    </table>
 
+    <table id="night-table" style="display: none;">
+        <thead>
+            <tr>
+                <th>Waqt</th>
+                <th>Saat Ka Naam</th>
+                <th>Planet Ka Naam</th>
+                <th>Number</th>
+            </tr>
+        </thead>
+        <tbody id="night-time">
+            <!-- Night timings will be populated here -->
+        </tbody>
+    </table>
+
+    <div id="footer">
+        <div id="latitude"></div>
+        <div id="longitude"></div>
+        <div id="current-date"></div>
+    </div>
 </body>
 </html>
