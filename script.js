@@ -7,59 +7,55 @@ document.addEventListener('DOMContentLoaded', () => {
     const sunTimesDiv = document.getElementById('sun-times');
     const latitudeElement = document.getElementById('latitude');
     const longitudeElement = document.getElementById('longitude');
+    const currentDateElement = document.getElementById('current-date');
 
     let userLatitude = 24.8607;  // Default: Karachi
     let userLongitude = 67.0011; // Default: Karachi
 
-    // 12 saatain for day and 12 for night
-    const saatain = [
-        { naam: "Mushtari", planet: "Jupiter" },
-        { naam: "Marekh", planet: "Mars" },
-        { naam: "Shams", planet: "Sun" },
-        { naam: "Zohra", planet: "Venus" },
-        { naam: "Attarad", planet: "Mercury" },
-        { naam: "Qamar", planet: "Moon" },
-        { naam: "Zuhal", planet: "Saturn" },
-        { naam: "Mushtari", planet: "Jupiter" },
-        { naam: "Marekh", planet: "Mars" },
-        { naam: "Shams", planet: "Sun" },
-        { naam: "Zohra", planet: "Venus" },
-        { naam: "Attarad", planet: "Mercury" }
+    const timeSlots = [
+        { name: "Mushtari", number: 2 },
+        { name: "Marekh", number: 3 },
+        { name: "Shams", number: 1 },
+        { name: "Zohra", number: 6 },
+        { name: "Attarad", number: 5 },
+        { name: "Qamar", number: 4 },
+        { name: "Zuhal", number: 7 }
     ];
 
-    const convertToLocalTime = (date) => {
-        return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    const convertToLocalTime = (utcTime) => {
+        const date = new Date(utcTime);
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     };
 
-    // Create the time slots for day and night
-    const createTimeSlots = (tableId, startTime, endTime) => {
+    const createTimeSlots = (tableId, sunrise, sunset) => {
         const tableBody = document.getElementById(tableId).querySelector('tbody');
         tableBody.innerHTML = '';  // Clear any existing rows
 
-        let currentTime = new Date(startTime);
-        let endDate = new Date(endTime);
-        const totalDuration = endDate - currentTime;
-        const slotDuration = totalDuration / saatain.length;
+        let startTime = new Date(sunrise).getTime();
+        let endTime = new Date(sunset).getTime();
+        let totalDuration = endTime - startTime;
+        let slotDuration = totalDuration / timeSlots.length;
 
-        const highlightTime = new Date(); // Current time for highlighting
+        const currentTime = new Date().getTime();
 
-        saatain.forEach((saat) => {
+        for (let i = 0; i < timeSlots.length; i++) {
             const row = document.createElement('tr');
-            const slotEndTime = new Date(currentTime.getTime() + slotDuration);
+            const endSlotTime = startTime + slotDuration;
+            const planet = timeSlots[i];  // Get the current planet based on index
+            
+            row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${convertToLocalTime(endSlotTime)}</td>
+                             <td>${planet.name}</td>
+                             <td>${planet.number}</td>`;  // Add planet number here
 
-            row.innerHTML = `<td>${convertToLocalTime(currentTime)} - ${convertToLocalTime(slotEndTime)}</td><td>${saat.naam}</td><td>${saat.planet}</td>`;
-
-            // Highlight the current saat if it's within the time range
-            if (highlightTime >= currentTime && highlightTime < slotEndTime) {
-                row.classList.add('highlight-current');
+            if (currentTime >= startTime && currentTime < endSlotTime) {
+                row.classList.add('highlight-current'); // Highlight the current saat
             }
-
+            
             tableBody.appendChild(row);
-            currentTime = slotEndTime; // Move to the next time slot
-        });
+            startTime += slotDuration;
+        }
     };
 
-    // Fetch sunrise and sunset times
     const fetchSunTimes = async (date) => {
         try {
             const coordinates = { lat: userLatitude, lng: userLongitude };
@@ -69,11 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.status === 'OK') {
                 const sunrise = new Date(data.results.sunrise).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
                 const sunset = new Date(data.results.sunset).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
-
-                // Update sun times and create slots
+                
                 updateSunTimes(sunrise, sunset);
                 createTimeSlots('day-table', sunrise, sunset);
-                createTimeSlots('night-table', sunset, new Date(new Date(sunrise).getTime() + 24 * 60 * 60 * 1000)); // Night slots for next day's sunrise
+                createTimeSlots('night-table', sunset, new Date(new Date(sunset).getTime() + 24 * 60 * 60 * 1000)); // Next day for night slots
             } else {
                 sunTimesDiv.innerText = 'Error fetching sun times.';
             }
@@ -88,11 +83,27 @@ document.addEventListener('DOMContentLoaded', () => {
         sunTimesDiv.innerText = `Sunrise: ${formattedSunrise}, Sunset: ${formattedSunset}`;
     };
 
-    // Initialize with current date and fetch sun times
-    dateInput.value = new Date().toISOString().split('T')[0];
-    fetchSunTimes(dateInput.value);
+    const getCurrentLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                userLatitude = position.coords.latitude;
+                userLongitude = position.coords.longitude;
+                latitudeElement.innerText = `${userLatitude}`;
+                longitudeElement.innerText = `${userLongitude}`;
+            }, (error) => {
+                sunTimesDiv.innerText = 'Error fetching location.';
+            });
+        } else {
+            sunTimesDiv.innerText = 'Geolocation is not supported by this browser.';
+        }
+    };
 
-    // Add event listeners for tab switching
+    dateInput.addEventListener('change', async (e) => {
+        const selectedDate = e.target.value;
+        fetchSunTimes(selectedDate);
+        currentDateElement.innerText = selectedDate;  // Display selected date
+    });
+
     dayTab.addEventListener('click', () => {
         dayTab.classList.add('active');
         nightTab.classList.remove('active');
@@ -107,9 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
         dayTime.classList.remove('active');
     });
 
-    // Change event for date picker
-    dateInput.addEventListener('change', (e) => {
-        const selectedDate = e.target.value;
-        fetchSunTimes(selectedDate);
-    });
+    // Initialize with current date and location
+    dateInput.value = new Date().toISOString().split('T')[0];
+    fetchSunTimes(dateInput.value);
+    getCurrentLocation();
 });
