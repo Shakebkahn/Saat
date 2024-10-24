@@ -43,7 +43,7 @@ function calculateSaatain(sunrise, sunset) {
     const nightSaatain = [];
     const now = new Date();
 
-    // Duration for each saat (based on the difference between sunrise and sunset)
+    // Duration for each saat
     const dayDuration = (sunset - sunrise) / 12;
     const nightDuration = (86400000 - (sunset - sunrise)) / 12;
 
@@ -88,7 +88,6 @@ function calculateSaatain(sunrise, sunset) {
         // Highlight current saat
         if (now >= saatData.start && now < saatData.end) {
             row.classList.add('highlight');
-            document.getElementById('current-saat').textContent = saatData.name; // Set current saat
         }
 
         dayTableBody.appendChild(row);
@@ -109,7 +108,6 @@ function calculateSaatain(sunrise, sunset) {
         // Highlight current saat
         if (now >= saatData.start && now < saatData.end) {
             row.classList.add('highlight');
-            document.getElementById('current-saat').textContent = saatData.name; // Set current saat
         }
 
         nightTableBody.appendChild(row);
@@ -123,11 +121,9 @@ function showTab(tabName) {
     document.querySelectorAll('.tab').forEach((tab) => {
         tab.classList.remove('active');
     });
-    document.getElementBy
-    // Display selected tab
     document.getElementById(tabName).style.display = 'block';
     document.querySelector(`.tab[onclick="showTab('${tabName}')"]`).classList.add('active');
 }
 
-// Initial fetch of location and time
-fetchLocationAndTime();
+// Fetch location and time on load
+window.onload = fetchLocationAndTime;
