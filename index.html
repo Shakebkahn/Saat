@@ -3,53 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="styles.css" rel="stylesheet">
-    <title>Saatain K Waqt</title>
+    <title>Saatain Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        #current-day-saat {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .tab {
+            display: flex;
+            cursor: pointer;
+            padding: 10px;
+            background-color: lightgray;
+        }
+        .tab.active {
+            background-color: blue;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
 </head>
 <body>
     <h1>Saatain k waqt</h1>
-    <div>
-        <strong>Current Day Saat:</strong> <span id="current-saat">Unknown</span> | <strong>Date:</strong> <span id="current-date">Unknown</span> <br>
-        <strong>Sunrise:</strong> <span id="sunrise-time">Unknown</span> | <strong>Sunset:</strong> <span id="sunset-time">Unknown</span>
-    </div>
+    <div id="current-day-saat"></div>
+    <div id="sunrise-sunset"></div>
     <div class="tabs">
         <div class="tab active" onclick="showTab('day')">Din</div>
         <div class="tab" onclick="showTab('night')">Raat</div>
     </div>
-    <div id="day" class="tab-content">
-        <table>
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>Saat</th>
-                    <th>Planet</th>
-                    <th>#</th>
-                </tr>
-            </thead>
-            <tbody id="day-saat">
-                <!-- Day saat will be populated here -->
-            </tbody>
-        </table>
-    </div>
-    <div id="night" class="tab-content" style="display: none;">
-        <table>
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>Saat</th>
-                    <th>Planet</th>
-                    <th>#</th>
-                </tr>
-            </thead>
-            <tbody id="night-saat">
-                <!-- Night saat will be populated here -->
-            </tbody>
-        </table>
-    </div>
-    <footer>
-        <p id="location">Location: Unknown</p>
-        <p id="coordinates">Longitude: Unknown | Latitude: Unknown</p>
-    </footer>
-    <script src="script.js"></script>
+    <div id="day-saat" class="saat-table"></div>
+    <div id="night-saat" class="saat-table" style="display: none;"></div>
+    <div id="location-info"></div>
+
+    <script src="saatain.js"></script>
 </body>
 </html>
