@@ -56,7 +56,7 @@ function calculateSaatain(sunrise, sunset) {
         // Day Saatain
         const dayStartTime = new Date(sunrise.getTime() + i * dayDuration);
         const dayEndTime = new Date(dayStartTime.getTime() + dayDuration);
-        const saat = saatain[i % saatain.length];
+        const saat = saatain[i % saatain.length]; // Fetch saatain from the array
         daySaatain.push({
             start: dayStartTime,
             end: dayEndTime,
@@ -68,7 +68,7 @@ function calculateSaatain(sunrise, sunset) {
         // Night Saatain
         const nightStartTime = new Date(sunset.getTime() + i * nightDuration);
         const nightEndTime = new Date(nightStartTime.getTime() + nightDuration);
-        const nightSaat = saatain[i % saatain.length];
+        const nightSaat = saatain[i % saatain.length]; // Fetch saatain from the array
         nightSaatain.push({
             start: nightStartTime,
             end: nightEndTime,
@@ -82,6 +82,7 @@ function calculateSaatain(sunrise, sunset) {
     displaySaatain(nightSaatain, 'night-saat');
 }
 
+
 function displaySaatain(saatainArray, tableId) {
     const tableBody = document.getElementById(tableId);
     tableBody.innerHTML = ''; // Clear previous entries
@@ -93,10 +94,10 @@ function displaySaatain(saatainArray, tableId) {
         row.innerHTML = `<td>${startTime} - ${endTime}</td>
                          <td>${saatData.name}</td>
                          <td>${saatData.planet}</td>
-                         <td>${saatData.number}</td>`;
+                         <td>${saatData.number}</td>`; // Display number
 
         // Highlight current saat
-        if (new Date() >= saatData.start && new Date() < saatData.end) {
+        if (now >= saatData.start && now < saatData.end) {
             row.classList.add('highlight');
             document.getElementById('current-saat').textContent = saatData.name;
         }
@@ -104,6 +105,7 @@ function displaySaatain(saatainArray, tableId) {
         tableBody.appendChild(row);
     });
 }
+
 
 function showTab(tab) {
     document.querySelectorAll('.tab-content').forEach((content) => {
