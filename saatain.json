@@ -1,88 +1,20 @@
 {
-  "days": [
-    {
-      "day": "Sunday",
-      "saat": [
-        {"name": "Shams", "number": 1},
-        {"name": "Zohra", "number": 6},
-        {"name": "Attarad", "number": 3},
-        {"name": "Qamar", "number": 2},
-        {"name": "Zuhal", "number": 4},
-        {"name": "Mushtari", "number": 5},
-        {"name": "Marekh", "number": 7}
-      ]
-    },
-    {
-      "day": "Monday",
-      "saat": [
-        {"name": "Qamar", "number": 2},
-        {"name": "Zohra", "number": 1},
-        {"name": "Attarad", "number": 3},
-        {"name": "Zuhal", "number": 4},
-        {"name": "Mushtari", "number": 5},
-        {"name": "Marekh", "number": 7},
-        {"name": "Shams", "number": 1}
-      ]
-    },
-    {
-      "day": "Tuesday",
-      "saat": [
-        {"name": "Marekh", "number": 7},
-        {"name": "Shams", "number": 1},
-        {"name": "Zohra", "number": 6},
-        {"name": "Attarad", "number": 3},
-        {"name": "Qamar", "number": 2},
-        {"name": "Zuhal", "number": 4},
-        {"name": "Mushtari", "number": 5}
-      ]
-    },
-    {
-      "day": "Wednesday",
-      "saat": [
-        {"name": "Attarad", "number": 3},
-        {"name": "Qamar", "number": 2},
-        {"name": "Zuhal", "number": 4},
-        {"name": "Mushtari", "number": 5},
-        {"name": "Marekh", "number": 7},
-        {"name": "Shams", "number": 1},
-        {"name": "Zohra", "number": 6}
-      ]
-    },
-    {
-      "day": "Thursday",
-      "saat": [
-        {"name": "Mushtari", "number": 5},
-        {"name": "Marekh", "number": 7},
-        {"name": "Shams", "number": 1},
-        {"name": "Zohra", "number": 6},
-        {"name": "Attarad", "number": 3},
-        {"name": "Qamar", "number": 2},
-        {"name": "Zuhal", "number": 4}
-      ]
-    },
-    {
-      "day": "Friday",
-      "saat": [
-        {"name": "Zohra", "number": 6},
-        {"name": "Shams", "number": 1},
-        {"name": "Attarad", "number": 3},
-        {"name": "Qamar", "number": 2},
-        {"name": "Zuhal", "number": 4},
-        {"name": "Mushtari", "number": 5},
-        {"name": "Marekh", "number": 7}
-      ]
-    },
-    {
-      "day": "Saturday",
-      "saat": [
-        {"name": "Zuhal", "number": 4},
-        {"name": "Mushtari", "number": 5},
-        {"name": "Marekh", "number": 7},
-        {"name": "Shams", "number": 1},
-        {"name": "Zohra", "number": 6},
-        {"name": "Attarad", "number": 3},
-        {"name": "Qamar", "number": 2}
-      ]
-    }
-  ]
+  "saatain": [
+    { "saat": "Shams", "planet": "Sun", "number": [1, 4] },
+    { "saat": "Mushtari", "planet": "Jupiter", "number": 2 },
+    { "saat": "Qamar", "planet": "Moon", "number": 3 },
+    { "saat": "Zohra", "planet": "Venus", "number": 6 },
+    { "saat": "Attarad", "planet": "Mercury", "number": 5 },
+    { "saat": "Marekh", "planet": "Mars", "number": 7 },
+    { "saat": "Zuhal", "planet": "Saturn", "number": 8 }
+  ],
+  "days": {
+    "Shams": "Sunday",
+    "Mushtari": "Thursday",
+    "Qamar": "Monday",
+    "Zohra": "Friday",
+    "Attarad": "Wednesday",
+    "Marekh": "Tuesday",
+    "Zuhal": "Saturday"
+  }
 }
