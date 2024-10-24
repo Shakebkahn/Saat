@@ -3,48 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Saatain Calculator</title>
+    <title>Sun Times Calculator</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Saatain Calculator</h1>
-        <div class="date-location">
-            <input type="date" id="date-picker">
-            <div id="location">
-                Latitude: <span id="latitude"></span>, Longitude: <span id="longitude"></span>
-            </div>
-        </div>
+        <h1>Sun Times Calculator</h1>
+        <input type="date" id="date-picker">
+        <p id="current-date"></p>
+        <p id="sun-times"></p>
+        <p>Latitude: <span id="latitude"></span></p>
+        <p>Longitude: <span id="longitude"></span></p>
+        
         <div class="tabs">
-            <button id="day-tab" class="active">Day</button>
-            <button id="night-tab">Night</button>
+            <button id="day-tab" class="tab active">Day</button>
+            <button id="night-tab" class="tab">Night</button>
         </div>
-        <div class="time-tables">
+
+        <div id="day-time" class="tab-content active">
             <table id="day-table">
                 <thead>
                     <tr>
-                        <th>Waqt</th>
-                        <th>Saat Ka Naam</th>
-                        <th>Planet</th>
+                        <th>Time</th>
+                        <th>Saat</th>
                         <th>Number</th>
                     </tr>
                 </thead>
-                <tbody id="day-time"></tbody>
+                <tbody></tbody>
             </table>
+        </div>
+
+        <div id="night-time" class="tab-content">
             <table id="night-table">
                 <thead>
                     <tr>
-                        <th>Waqt</th>
-                        <th>Saat Ka Naam</th>
-                        <th>Planet</th>
+                        <th>Time</th>
+                        <th>Saat</th>
                         <th>Number</th>
                     </tr>
                 </thead>
-                <tbody id="night-time"></tbody>
+                <tbody></tbody>
             </table>
         </div>
-        <div id="sun-times"></div>
     </div>
+    
     <script src="script.js"></script>
 </body>
 </html>
