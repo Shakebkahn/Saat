@@ -1,60 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ur">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saatain Calculator</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <title>Saatain k waqt</title>
 </head>
 <body>
-    <header>
-        <h1>Saatain k waqt</h1>
-        <h2 id="current-saat"></h2>
-        <h3 id="current-saat-number"></h3>
-        <h4 id="current-planet"></h4>
-        <input type="date" id="date-picker">
-        <div id="sun-times"></div>
-    </header>
-    <div class="tabs">
-        <button id="day-tab" class="tab-btn active">Day Time</button>
-        <button id="night-tab" class="tab-btn">Night Time</button>
+    <div class="container">
+        <header>
+            <h1>Saatain k waqt</h1>
+            <div id="current-saat-info"></div>
+            <div id="date"></div>
+            <div id="sun-times"></div>
+        </header>
+        <div class="tabs">
+            <button id="day-tab" class="tab-button active">Din ki Saatain</button>
+            <button id="night-tab" class="tab-button">Raat ki Saatain</button>
+        </div>
+        <div id="day-time" class="time-table">
+            <table id="day-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Saat</th>
+                        <th>Planet</th>
+                        <th>#</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div id="night-time" class="time-table" style="display:none;">
+            <table id="night-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Saat</th>
+                        <th>Planet</th>
+                        <th>#</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <footer>
+            <div id="location-info"></div>
+            <div id="latitude"></div>
+            <div id="longitude"></div>
+        </footer>
     </div>
-    <div id="day-time" class="tab-content active">
-        <table id="day-table">
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>Saat</th>
-                    <th>Planet</th>
-                    <th>#</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Day Time slots will be added here -->
-            </tbody>
-        </table>
-    </div>
-    <div id="night-time" class="tab-content">
-        <table id="night-table">
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>Saat</th>
-                    <th>Planet</th>
-                    <th>#</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Night Time slots will be added here -->
-            </tbody>
-        </table>
-    </div>
-    <footer>
-        <p id="location"></p>
-        <p id="latitude"></p>
-        <p id="longitude"></p>
-    </footer>
+
     <script src="script.js"></script>
 </body>
 </html>
