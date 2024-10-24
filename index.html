@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+q<!DOCTYPE html>
 <html lang="ur">
 <head>
     <meta charset="UTF-8">
@@ -117,8 +117,8 @@
                 document.getElementById('current-date').textContent = now.toLocaleDateString();
 
                 // Replace with actual sunrise and sunset times
-                const sunrise = new Date(now.setHours(6, 0, 0)); // Dummy sunrise time
-                const sunset = new Date(now.setHours(18, 0, 0)); // Dummy sunset time
+                const sunrise = new Date(now);sunrise.setHours(6, 0, 0)); // Dummy sunrise time
+                const sunset = new Date(now);sunset.setHours(18, 0, 0)); // Dummy sunset time
                 document.getElementById('sunrise-time').textContent = sunrise.toLocaleTimeString();
                 document.getElementById('sunset-time').textContent = sunset.toLocaleTimeString();
 
