@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 userLongitude = position.coords.longitude;
                 latitudeElement.innerText = `${userLatitude}`;
                 longitudeElement.innerText = `${userLongitude}`;
+                fetchSunTimes(dateInput.value); // Fetch sun times with current location
             }, (error) => {
                 sunTimesDiv.innerText = 'Error fetching location.';
             });
@@ -85,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     dateInput.addEventListener('change', async (e) => {
         const selectedDate = e.target.value;
-        fetchSunTimes(selectedDate);
+        fetchSunTimes(selectedDate); // Fetch sun times for the selected date
     });
 
     // Initialize with current date and location
