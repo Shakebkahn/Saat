@@ -1,12 +1,12 @@
-const saatain = [
-    { name: 'Shams', planet: 'Shams', number: [1, 4] },
-    { name: 'Zohra', planet: 'Zohra', number: [6] },
-    { name: 'Marekh', planet: 'Marekh', number: [2, 5] },
-    { name: 'Mushtari', planet: 'Mushtari', number: [3, 7] },
-    { name: 'Attarad', planet: 'Attarad', number: [8] },
-    { name: 'Zuhal', planet: 'Zuhal', number: [9, 10] },
-    { name: 'Qamar', planet: 'Qamar', number: [11, 12] }
-];
+let saatain = [];
+
+fetch('saatdb.json') // Aapka JSON database ka path
+    .then(response => response.json())
+    .then(data => {
+        saatain = data.saatain; // JSON file se saatain data le lo
+        fetchLocationAndTime(); // Location aur time ko fetch karne ka function call karein
+    })
+    .catch(error => console.error("Error fetching the saatain database:", error));
 
 function fetchLocationAndTime() {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -18,7 +18,12 @@ function fetchLocationAndTime() {
 
         // Fetch sunrise and sunset data
         fetch(`https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 const sunrise = new Date(data.results.sunrise);
                 const sunset = new Date(data.results.sunset);
@@ -32,6 +37,7 @@ function fetchLocationAndTime() {
             })
             .catch(error => {
                 alert("Unable to retrieve sunrise and sunset times.");
+                console.error(error);
             });
     }, () => {
         alert("Unable to retrieve your location.");
@@ -43,7 +49,6 @@ function calculateSaatain(sunrise, sunset) {
     const nightSaatain = [];
     const now = new Date();
 
-    // Duration for each saat (based on the difference between sunrise and sunset)
     const dayDuration = (sunset - sunrise) / 12;
     const nightDuration = (86400000 - (sunset - sunrise)) / 12;
 
@@ -57,7 +62,7 @@ function calculateSaatain(sunrise, sunset) {
             end: dayEndTime,
             name: saat.name,
             planet: saat.planet,
-            number: saat.number[i % saat.number.length]
+            number: saat.number[0] // First number for simplicity
         });
 
         // Night Saatain
@@ -69,50 +74,34 @@ function calculateSaatain(sunrise, sunset) {
             end: nightEndTime,
             name: nightSaat.name,
             planet: nightSaat.planet,
-            number: nightSaat.number[i % nightSaat.number.length]
+            number: nightSaat.number[0] // First number for simplicity
         });
     }
 
-    // Display Day Saatain
-    const dayTableBody = document.getElementById('day-saat');
-    daySaatain.forEach((saatData) => {
+    displaySaatain(daySaatain, 'day-saat');
+    displaySaatain(nightSaatain, 'night-saat');
+}
+
+function displaySaatain(saatainArray, tableId) {
+    const tableBody = document.getElementById(tableId);
+    tableBody.innerHTML = ''; // Clear previous entries
+
+    saatainArray.forEach((saatData) => {
         const row = document.createElement('tr');
         const startTime = saatData.start.toLocaleTimeString();
         const endTime = saatData.end.toLocaleTimeString();
-        const timeCell = `<td>${startTime} - ${endTime}</td>`;
-        const saatCell = `<td>${saatData.name}</td>`;
-        const planetCell = `<td>${saatData.planet}</td>`;
-        const numberCell = `<td>${saatData.number}</td>`;
-        row.innerHTML = timeCell + saatCell + planetCell + numberCell;
+        row.innerHTML = `<td>${startTime} - ${endTime}</td>
+                         <td>${saatData.name}</td>
+                         <td>${saatData.planet}</td>
+                         <td>${saatData.number}</td>`;
 
         // Highlight current saat
-        if (now >= saatData.start && now < saatData.end) {
+        if (new Date() >= saatData.start && new Date() < saatData.end) {
             row.classList.add('highlight');
-            document.getElementById('current-saat').textContent = saatData.name; // Set current saat
+            document.getElementById('current-saat').textContent = saatData.name;
         }
 
-        dayTableBody.appendChild(row);
-    });
-
-    // Display Night Saatain
-    const nightTableBody = document.getElementById('night-saat');
-    nightSaatain.forEach((saatData) => {
-        const row = document.createElement('tr');
-        const startTime = saatData.start.toLocaleTimeString();
-        const endTime = saatData.end.toLocaleTimeString();
-        const timeCell = `<td>${startTime} - ${endTime}</td>`;
-        const saatCell = `<td>${saatData.name}</td>`;
-        const planetCell = `<td>${saatData.planet}</td>`;
-        const numberCell = `<td>${saatData.number}</td>`;
-        row.innerHTML = timeCell + saatCell + planetCell + numberCell;
-
-        // Highlight current saat
-        if (now >= saatData.start && now < saatData.end) {
-            row.classList.add('highlight');
-            document.getElementById('current-saat').textContent = saatData.name; // Set current saat
-        }
-
-        nightTableBody.appendChild(row);
+        tableBody.appendChild(row);
     });
 }
 
@@ -127,6 +116,3 @@ function showTab(tab) {
     document.getElementById(tab).style.display = 'block';
     document.querySelector(`.tab[onclick="showTab('${tab}')"]`).classList.add('active');
 }
-
-// Call functions to start the process
-fetchLocationAndTime();
