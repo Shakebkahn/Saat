@@ -156,24 +156,25 @@
                     end: dayEndTime,
                     name: saat.name,
                     planet: saat.planet,
-                    number: saat.number[i % saat.number.length]
+                    number: saat.number[0] // Fixed to take first number
                 });
 
                 // Night Saatain
                 const nightStartTime = new Date(sunset.getTime() + i * nightDuration);
                 const nightEndTime = new Date(nightStartTime.getTime() + nightDuration);
-                const nightSaat = saatain[i % saatain.length];
+                const nightSaat = saatain[(i + 6) % saatain.length]; // Night saat should come after sunset
                 nightSaatain.push({
                     start: nightStartTime,
                     end: nightEndTime,
                     name: nightSaat.name,
                     planet: nightSaat.planet,
-                    number: nightSaat.number[i % nightSaat.number.length]
+                    number: nightSaat.number[0] // Fixed to take first number
                 });
             }
 
             // Display Day Saatain
             const dayTableBody = document.getElementById('day-saat');
+            dayTableBody.innerHTML = ""; // Clear previous rows
             daySaatain.forEach((saatData) => {
                 const row = document.createElement('tr');
                 const startTime = saatData.start.toLocaleTimeString();
@@ -187,6 +188,7 @@
                 // Highlight current saat
                 if (now >= saatData.start && now < saatData.end) {
                     row.classList.add('highlight');
+                    document.getElementById('current-saat').textContent = saatData.name; // Set current saat
                 }
 
                 dayTableBody.appendChild(row);
@@ -194,6 +196,7 @@
 
             // Display Night Saatain
             const nightTableBody = document.getElementById('night-saat');
+            nightTableBody.innerHTML = ""; // Clear previous rows
             nightSaatain.forEach((saatData) => {
                 const row = document.createElement('tr');
                 const startTime = saatData.start.toLocaleTimeString();
@@ -203,28 +206,29 @@
                 const planetCell = `<td>${saatData.planet}</td>`;
                 const numberCell = `<td>${saatData.number}</td>`;
                 row.innerHTML = timeCell + saatCell + planetCell + numberCell;
-
+                
                 // Highlight current saat
                 if (now >= saatData.start && now < saatData.end) {
                     row.classList.add('highlight');
+                    document.getElementById('current-saat').textContent = saatData.name; // Set current saat
                 }
 
                 nightTableBody.appendChild(row);
             });
         }
 
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach((tab) => {
-                tab.style.display = 'none';
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach((content) => {
+                content.style.display = 'none';
             });
-            document.querySelectorAll('.tab').forEach((tab) => {
-                tab.classList.remove('active');
+            document.getElementById(tab).style.display = 'block';
+            document.querySelectorAll('.tab').forEach((tabElement) => {
+                tabElement.classList.remove('active');
             });
-            document.getElementById(tabName).style.display = 'block';
-            document.querySelector(`.tab[onclick="showTab('${tabName}')"]`).classList.add('active');
+            document.querySelector(`.tab:contains('${tab === 'day' ? 'Din' : 'Raat'}')`).classList.add('active');
         }
 
-        // Initial setup
+        // Initial function call to fetch location and time
         fetchLocationAndTime();
     </script>
 </body>
