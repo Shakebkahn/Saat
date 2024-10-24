@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <title>Saatain K Waqt</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: lightgray;
+            margin: 0 5px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .tab.active {
+            background-color: blue;
+            color: white;
+        }
+        .tab:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+        footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .highlight {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <h1>Saatain k waqt</h1>
+    <div>
+        <strong>Current Day Saat:</strong> <span id="current-saat">Unknown</span> | <strong>Date:</strong> <span id="current-date">Unknown</span> <br>
+        <strong>Sunrise:</strong> <span id="sunrise-time">Unknown</span> | <strong>Sunset:</strong> <span id="sunset-time">Unknown</span>
+    </div>
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('day')">Din</div>
+        <div class="tab" onclick="showTab('night')">Raat</div>
+    </div>
+    <div id="day" class="tab-content">
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Saat</th>
+                    <th>Planet</th>
+                    <th>#</th>
+                </tr>
+            </thead>
+            <tbody id="day-saat">
+                <!-- Day saat will be populated here -->
+            </tbody>
+        </table>
+    </div>
+    <div id="night" class="tab-content" style="display: none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Saat</th>
+                    <th>Planet</th>
+                    <th>#</th>
+                </tr>
+            </thead>
+            <tbody id="night-saat">
+                <!-- Night saat will be populated here -->
+            </tbody>
+        </table>
+    </div>
+    <footer>
+        <p id="location">Location: Unknown</p>
+        <p id="coordinates">Longitude: Unknown | Latitude: Unknown</p>
+    </footer>
+    <script>
+        const saatain = [
+            { name: 'Shams', planet: 'Shams', number: [1, 4] },
+            { name: 'Zohra', planet: 'Zohra', number: [6] },
+            { name: 'Marekh', planet: 'Marekh', number: [2, 5] },
+            { name: 'Mushtari', planet: 'Mushtari', number: [3, 7] },
+            { name: 'Attarad', planet: 'Attarad', number: [8] },
+            { name: 'Zuhal', planet: 'Zuhal', number: [9, 10] },
+            { name: 'Qamar', planet: 'Qamar', number: [11, 12] }
+        ];
+
+        function fetchLocationAndTime() {
+            navigator.geolocation.getCurrentPosition((position) => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                document.getElementById('coordinates').textContent = `Longitude: ${longitude.toFixed(4)} | Latitude: ${latitude.toFixed(4)}`;
+                document.getElementById('location').textContent = `Location: Detected Automatically`;
+
+                // Fetch sunrise and sunset data
+                fetch(`https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const sunrise = new Date(data.results.sunrise);
+                        const sunset = new Date(data.results.sunset);
+
+                        document.getElementById('sunrise-time').textContent = sunrise.toLocaleTimeString();
+                        document.getElementById('sunset-time').textContent = sunset.toLocaleTimeString();
+                        document.getElementById('current-date').textContent = new Date().toLocaleDateString();
+
+                        // Calculate saatain and update the tables
+                        calculateSaatain(sunrise, sunset);
+                    })
+                    .catch(error => {
+                        alert("Unable to retrieve sunrise and sunset times.");
+                    });
+            }, () => {
+                alert("Unable to retrieve your location.");
+            });
+        }
+
+        function calculateSaatain(sunrise, sunset) {
+            const daySaatain = [];
+            const nightSaatain = [];
+            const now = new Date();
+
+            // Duration for each saat (based on the difference between sunrise and sunset)
+            const dayDuration = (sunset - sunrise) / 12;
+            const nightDuration = (86400000 - (sunset - sunrise)) / 12;
+
+            for (let i = 0; i < 12; i++) {
+                // Day Saatain
+                const dayStartTime = new Date(sunrise.getTime() + i * dayDuration);
+                const dayEndTime = new Date(dayStartTime.getTime() + dayDuration);
+                const saat = saatain[i % saatain.length];
+                daySaatain.push({
+                    start: dayStartTime,
+                    end: dayEndTime,
+                    name: saat.name,
+                    planet: saat.planet,
+                    number: saat.number[i % saat.number.length]
+                });
+
+                // Night Saatain
+                const nightStartTime = new Date(sunset.getTime() + i * nightDuration);
+                const nightEndTime = new Date(nightStartTime.getTime() + nightDuration);
+                const nightSaat = saatain[i % saatain.length];
+                nightSaatain.push({
+                    start: nightStartTime,
+                    end: nightEndTime,
+                    name: nightSaat.name,
+                    planet: nightSaat.planet,
+                    number: nightSaat.number[i % nightSaat.number.length]
+                });
+            }
+
+            // Display Day Saatain
+            const dayTableBody = document.getElementById('day-saat');
+            daySaatain.forEach((saatData) => {
+                const row = document.createElement('tr');
+                const startTime = saatData.start.toLocaleTimeString();
+                const endTime = saatData.end.toLocaleTimeString();
+                row.innerHTML = `<td>${startTime} - ${endTime}</td>
+                                 <td>${saatData.name}</td>
+                                 <td>${saatData.planet}</td>
+                                 <td>${saatData.number}</td>`;
+                
+                // Highlight current saat
+                if (now >= saatData.start && now < saatData.end) {
+                    row.classList.add('highlight');
+                }
+
+                dayTableBody.appendChild(row);
+            });
+
+            // Display Night Saatain
+            const nightTableBody = document.getElementById('night-saat');
+            nightSaatain.forEach((saatData) => {
+                const row = document.createElement('tr');
+                const startTime = saatData.start.toLocaleTimeString();
+                const endTime = saatData.end.toLocaleTimeString();
+                row.innerHTML = `<td>${startTime} - ${endTime}</td>
+                                 <td>${saatData.name}</td>
+                                 <td>${saatData.planet}</td>
+                                 <td>${saatData.number}</td>`;
+                
+                // Highlight current saat
+                if (now >= saatData.start && now < saatData.end) {
+                    row.classList.add('highlight');
+                }
+
+                nightTableBody.appendChild(row);
+            });
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach((tab) => {
+                tab.style.display = 'none';
+            });
+            document.querySelectorAll('.tab').forEach((tab) => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabName).style.display = 'block';
+            document.querySelector(`.tab[onclick="showTab('${tabName}')"]`).classList.add('active');
+        }
+
+        // Call the function to fetch location and time
+        fetchLocationAndTime();
+    </script>
+</body>
+</html>
