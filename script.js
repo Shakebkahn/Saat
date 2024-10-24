@@ -7,18 +7,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const sunTimesDiv = document.getElementById('sun-times');
     const latitudeElement = document.getElementById('latitude');
     const longitudeElement = document.getElementById('longitude');
-    
+
     let userLatitude = 24.8607;  // Default: Karachi
     let userLongitude = 67.0011; // Default: Karachi
 
     const timeSlots = [
-        { name: "Mushtari", number: 2, planet: "Jupiter" },
-        { name: "Marekh", number: 7, planet: "Mars" },
-        { name: "Shams", number: "1, 4", planet: "Sun" },
-        { name: "Zohra", number: 6, planet: "Venus" },
-        { name: "Attarad", number: 5, planet: "Mercury" },
-        { name: "Qamar", number: 3, planet: "Moon" },
-        { name: "Zuhal", number: 4, planet: "Saturn" }
+        { name: "Mushtari", number: 2 },
+        { name: "Marekh", number: 7 },
+        { name: "Shams", number: 1, alternateNumber: 4 },
+        { name: "Zohra", number: 6 },
+        { name: "Attarad", number: 5 },
+        { name: "Qamar", number: 3 },
+        { name: "Zuhal", number: 4 }
     ];
 
     const convertToLocalTime = (utcTime) => {
@@ -41,8 +41,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const slot = timeSlots[i];
             row.innerHTML = `<td>${convertToLocalTime(startTime)} - ${endSlotTime}</td>
                              <td>${slot.name}</td>
-                             <td>${slot.planet}</td>
+                             <td>${slot.name}</td>
                              <td>${slot.number}</td>`;
+            if (slot.name === "Shams") {
+                const currentTime = new Date();
+                const currentHour = currentTime.getHours();
+                const currentMinute = currentTime.getMinutes();
+                const startSlotHour = new Date(startTime).getHours();
+                const endSlotHour = new Date(startTime + slotDuration).getHours();
+                
+                if (currentHour >= startSlotHour && currentHour < endSlotHour) {
+                    row.classList.add('current-saat');
+                    document.getElementById('current-saat').innerText = slot.name;
+                    document.getElementById('current-saat-number').innerText = `${slot.number} / ${slot.alternateNumber || ''}`;
+                    document.getElementById('current-planet').innerText = slot.name;
+                }
+            }
             tableBody.appendChild(row);
             startTime += slotDuration;
         }
@@ -58,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const sunrise = new Date(data.results.sunrise).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
                 const sunset = new Date(data.results.sunset).toLocaleString("en-US", { timeZone: "Asia/Karachi" });
 
-                sunTimesDiv.innerText = `Sunrise: ${convertToLocalTime(sunrise)}, Sunset: ${convertToLocalTime(sunset)}`;
+                sunTimesDiv.innerText = `Sunrise: ${convertToLocalTime(sunrise)} | Sunset: ${convertToLocalTime(sunset)}`;
                 createTimeSlots('day-table', sunrise, sunset); // Day slots
                 createTimeSlots('night-table', sunset, sunrise); // Night slots
             } else {
