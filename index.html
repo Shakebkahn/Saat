@@ -97,7 +97,7 @@
         <p id="coordinates">Longitude: Unknown | Latitude: Unknown</p>
     </footer>
     <script>
-        // Function to fetch location and sunrise/sunset time automatically
+        // Fetch and update location, sunrise, and sunset
         function fetchLocationAndTime() {
             navigator.geolocation.getCurrentPosition((position) => {
                 const latitude = position.coords.latitude;
@@ -106,7 +106,7 @@
                 document.getElementById('coordinates').textContent = `Longitude: ${longitude.toFixed(4)} | Latitude: ${latitude.toFixed(4)}`;
                 document.getElementById('location').textContent = `Location: Detected Automatically`;
 
-                // Fetch sunrise and sunset based on coordinates
+                // Fetch sunrise and sunset data
                 fetch(`https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`)
                     .then(response => response.json())
                     .then(data => {
@@ -115,34 +115,33 @@
 
                         document.getElementById('sunrise-time').textContent = sunrise.toLocaleTimeString();
                         document.getElementById('sunset-time').textContent = sunset.toLocaleTimeString();
-
                         document.getElementById('current-date').textContent = new Date().toLocaleDateString();
-                        
-                        // Automatically calculate saatain
+
+                        // Calculate saatain and update the tables
                         calculateSaatain(sunrise, sunset);
                     })
                     .catch(error => {
                         alert("Unable to retrieve sunrise and sunset times.");
                     });
-
             }, () => {
                 alert("Unable to retrieve your location.");
             });
         }
 
-        // Function to calculate saatain dynamically based on sunrise and sunset
+        // Calculate and populate saatain tables dynamically based on sunrise and sunset
         function calculateSaatain(sunrise, sunset) {
             const daySaatain = [];
             const nightSaatain = [];
-            
-            // Divide daytime into 12 equal periods based on sunrise and sunset
+
+            // Duration for each saat
             const dayDuration = (sunset - sunrise) / 12;
-            const nightDuration = (24 * 60 * 60 * 1000 - (sunset - sunrise)) / 12;
-            
+            const nightDuration = ((24 * 60 * 60 * 1000) - (sunset - sunrise)) / 12;
+
+            // Day saatain
             for (let i = 0; i < 12; i++) {
                 const dayStart = new Date(sunrise.getTime() + i * dayDuration);
                 const dayEnd = new Date(dayStart.getTime() + dayDuration);
-                
+
                 daySaatain.push({
                     time: `${dayStart.toLocaleTimeString()} - ${dayEnd.toLocaleTimeString()}`,
                     saat: "Dynamic Saat",
@@ -151,11 +150,11 @@
                 });
             }
 
-            // Similarly divide night time
+            // Night saatain
             for (let i = 0; i < 12; i++) {
                 const nightStart = new Date(sunset.getTime() + i * nightDuration);
                 const nightEnd = new Date(nightStart.getTime() + nightDuration);
-                
+
                 nightSaatain.push({
                     time: `${nightStart.toLocaleTimeString()} - ${nightEnd.toLocaleTimeString()}`,
                     saat: "Dynamic Saat",
@@ -164,13 +163,15 @@
                 });
             }
 
+            // Populate tables with calculated data
             populateTable('day-saat', daySaatain);
             populateTable('night-saat', nightSaatain);
 
+            // Highlight the current saat
             highlightCurrentSaat(sunrise, sunset);
         }
 
-        // Populate table with saatain data
+        // Populate table with data
         function populateTable(tableId, saatain) {
             const tableBody = document.getElementById(tableId);
             tableBody.innerHTML = '';
@@ -185,11 +186,11 @@
             });
         }
 
-        // Highlight the current saat based on current time
+        // Highlight current saat based on the current time
         function highlightCurrentSaat(sunrise, sunset) {
             const now = new Date();
             const currentHour = now.getHours();
-            // Logic to highlight the current saat
+            // Logic to highlight the current saat will be implemented here
         }
 
         // Tab switching function
@@ -211,7 +212,7 @@
             }
         }
 
-        // Fetch everything on page load
+        // Trigger fetching location and time when the page loads
         window.onload = fetchLocationAndTime;
     </script>
 </body>
