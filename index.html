@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <title>Saatain k waqt</title>
 </head>
@@ -12,13 +12,15 @@
         <header>
             <h1>Saatain k waqt</h1>
             <div id="current-saat-info"></div>
-            <div id="date"></div>
+            <div id="date-info"></div>
             <div id="sun-times"></div>
         </header>
+
         <div class="tabs">
-            <button id="day-tab" class="tab-button active">Din ki Saatain</button>
-            <button id="night-tab" class="tab-button">Raat ki Saatain</button>
+            <button id="day-tab" class="tab" onclick="showTab('day')">Din</button>
+            <button id="night-tab" class="tab" onclick="showTab('night')">Raat</button>
         </div>
+
         <div id="day-time" class="time-table">
             <table id="day-table">
                 <thead>
@@ -32,6 +34,7 @@
                 <tbody></tbody>
             </table>
         </div>
+
         <div id="night-time" class="time-table" style="display:none;">
             <table id="night-table">
                 <thead>
@@ -45,10 +48,10 @@
                 <tbody></tbody>
             </table>
         </div>
+
         <footer>
             <div id="location-info"></div>
-            <div id="latitude"></div>
-            <div id="longitude"></div>
+            <div id="coordinates"></div>
         </footer>
     </div>
 
