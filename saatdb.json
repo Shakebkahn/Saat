@@ -1,20 +1,11 @@
 {
-  "saatain": [
-    { "saat": "Shams", "planet": "Sun", "number": [1, 4] },
-    { "saat": "Mushtari", "planet": "Jupiter", "number": 2 },
-    { "saat": "Qamar", "planet": "Moon", "number": 3 },
-    { "saat": "Zohra", "planet": "Venus", "number": 6 },
-    { "saat": "Attarad", "planet": "Mercury", "number": 5 },
-    { "saat": "Marekh", "planet": "Mars", "number": 7 },
-    { "saat": "Zuhal", "planet": "Saturn", "number": 8 }
-  ],
-  "days": {
-    "Shams": "Sunday",
-    "Mushtari": "Thursday",
-    "Qamar": "Monday",
-    "Zohra": "Friday",
-    "Attarad": "Wednesday",
-    "Marekh": "Tuesday",
-    "Zuhal": "Saturday"
-  }
+    "saatain": [
+        { "name": "Shams", "planet": "Sun", "number": [1, 4] },
+        { "name": "Zohra", "planet": "Venus", "number": [6] },
+        { "name": "Marekh", "planet": "Mars", "number": [7] },
+        { "name": "Mushtari", "planet": "Jupiter", "number": [2] },
+        { "name": "Attarad", "planet": "Mercury", "number": [5] },
+        { "name": "Zuhal", "planet": "Saturn", "number": [8] },
+        { "name": "Qamar", "planet": "Moon", "number": [3] }
+    ]
 }
