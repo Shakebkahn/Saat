@@ -1,4 +1,52 @@
-<body style="background-color: #f4f4f4; color: #333;">
-    <h1 style="text-align: center; color: #007bff;">Saatain k waqt</h1>
-    <!-- baqi ka code -->
-</body>
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+    color: #007bff;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: lightgray;
+    margin: 0 5px;
+    border-radius: 5px;
+}
+
+.tab.active {
+    background-color: blue;
+    color: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+footer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.highlight {
+    background-color: yellow;
+}
